@@ -158,12 +158,43 @@ namespace Bank
                 IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
                 if (temp.Count() == 1)
                 {
-                    
+                    SavingsAccount sa = temp.First();
+                    sa.DepositAmount(amount);
+                    return true;
+                }
+                else return false;
+            }
+            else return false;
+        }
+
+        public Boolean Withdraw(long pNr, int accountId, decimal amount)
+        {
+            Customer c = InternalGetCustomer(pNr);
+            if (null != c)
+            {
+                IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
+                if (temp.Count() == 1)
+                {
+                    SavingsAccount sa = temp.First();
+                    return sa.WithdrawAmount(amount);
+                }
+                else return false;
+            }
+            else return false;
+        }
+
+        public string CloseAccount(long pNr, int accountId)
+        {
+            Customer c = InternalGetCustomer(pNr);
+            if (null != c)
+            {
+                IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
+                if (temp.Count() == 1)
+                {
+                    c.GetListOfAccounts().Remove(temp.First());
                 }
             }
         }
-
-
 
 /*
         public void CreateCustomerDialog() {
@@ -204,17 +235,12 @@ namespace Bank
                 b.AddSavingsAccount(ssn);
                 b.AddSavingsAccount(ssn);
                 b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
             }
-            Console.WriteLine(b.GetAccount(ssn,1018));
+            b.Deposit(ssn, 1005, 2000);
+            b.Deposit(ssn, 1001, 93029);
+            b.Deposit(ssn, 1002, 54200);
+            Console.WriteLine(b.Withdraw(ssn, 1005, 1005));
+            b.RemoveCustomer(ssn).ForEach(line => Console.WriteLine(line));
 
         }
     }

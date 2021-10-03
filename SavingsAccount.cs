@@ -5,7 +5,7 @@ namespace Bank
     class SavingsAccount
     {
         private decimal             Amount;
-        private readonly double Interest = 0.1;
+        private readonly double Interest = 1;
         private readonly string     AccountType = "Savings";
         private readonly int                 AccountNo;
 
@@ -18,12 +18,12 @@ namespace Bank
             this.AccountNo = AccountNo;
         }
 
-        public void DepositAmount(int amount)
+        public void DepositAmount(decimal amount)
         {
             this.Amount += amount;
         }
 
-        public bool WithdrawAmount(int amount)
+        public bool WithdrawAmount(decimal amount)
         {
             
             if ((this.Amount - amount) >= 0)
@@ -60,7 +60,7 @@ namespace Bank
 
         public string ShowAccount()
         {
-            return AccountNo + ", " + Amount + ", " + AccountType + ", " + CalculateInterest();
+            return AccountNo + "\t" + Amount + "\t" + AccountType + "\t" + CalculateInterest();
         }
     }
 
