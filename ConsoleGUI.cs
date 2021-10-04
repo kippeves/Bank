@@ -116,6 +116,17 @@ namespace Bank
 
         static void Main()
         {
+            long ssn = 12391823723;
+            BankLogic b = new();
+            b.AddCustomer("TestKund",ssn);
+            b.AddSavingsAccount(ssn);
+            Customer c = b.CustomerHelper(ssn);
+            foreach (var line in b.GetCustomer(ssn))
+            {
+                Console.WriteLine(line);
+            }
+
+            /*
             BankLogic b = new();
             b.SetCurrentUser(null);
             b.SetCurrentAccount(null);
@@ -188,6 +199,7 @@ namespace Bank
                 {
                 }
             }
+            */
         }
     }
 }
