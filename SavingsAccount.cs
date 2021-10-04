@@ -9,10 +9,6 @@ namespace Bank
         private readonly string     AccountType = "Savings";
         private readonly int                 AccountNo;
 
-        private SavingsAccount(){
-            throw new Exception("Cannot create an account without a Social Security Number");
-        }
-
         public SavingsAccount(int AccountNo)
         {
             this.AccountNo = AccountNo;

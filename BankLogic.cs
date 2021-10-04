@@ -6,11 +6,33 @@ using System.Threading.Tasks;
 
 namespace Bank
 {
+
     class BankLogic
     {
-        readonly List<Customer> ListOfCustomers = new();
+        private Customer LoadedCustomer;
+        private SavingsAccount LoadedAccount;
 
-        private Customer InternalGetCustomer(long ssn)
+        public SavingsAccount GetCurrentAccount()
+        {
+            return LoadedAccount;
+        }
+
+        public void SetCurrentAccount(SavingsAccount sa)
+        {
+            LoadedAccount = sa;
+        }
+
+        public Customer GetCurrentUser() {
+            return LoadedCustomer;
+        }
+        public void SetCurrentUser(Customer c) {
+            LoadedCustomer = c;
+        }
+        readonly private List<Customer> ListOfCustomers = new();
+        public List<Customer> GetListOfCustomers() {
+            return ListOfCustomers;
+        }
+        public Customer CustomerHelper(long ssn)
         {
             IEnumerable<Customer> tempCustList = ListOfCustomers.Where(c => c.SSN == ssn);
             if (tempCustList.Count() == 1)
@@ -19,15 +41,20 @@ namespace Bank
             }
             else return null;
         }
-
-
+        public SavingsAccount AccountHelper(Customer c, int accountId) {
+            IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
+            if (temp.Count() == 1)
+            {
+                return temp.First();
+            }
+            else return null;
+        }
         public List<String> GetCustomers()
         {
             List<string> returnList = new();
             ListOfCustomers.ForEach(cust => returnList.Add("Personnummer: " + cust.SSN + ", Namn: " + cust.FullName));
             return returnList;
         }
-
         public bool AddCustomer(string name, long pNr) 
         {
             int SpaceIndex = name.LastIndexOf(" ");
@@ -35,14 +62,14 @@ namespace Bank
             string LastName;
             if (SpaceIndex > 0)
             {
-                FirstName = name[0..SpaceIndex];
-                LastName = name[(SpaceIndex + 1)..name.Length];
+                FirstName = name[0..SpaceIndex].Trim();
+                LastName = name[(SpaceIndex + 1)..name.Length].Trim();
             }
             else { 
                 FirstName = name;
                 LastName = "";
             }
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null == c)
             {
                 c = new(FirstName, LastName, pNr);
@@ -51,11 +78,10 @@ namespace Bank
             }
             else return false;
         }
-
         public List<string> GetCustomer(long pNr)
         {
             List<string> TempList = new();
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
                 TempList.Add($"Namn: {c.FullName}, Personnummer: {c.SSN}");
@@ -65,10 +91,9 @@ namespace Bank
             }
             else return null;
         }
-
         public bool ChangeCustomerName(String name, long pNr) {
 
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
                 int SpaceIndex = name.LastIndexOf(" ");
@@ -76,8 +101,8 @@ namespace Bank
                 string LastName;
                 if (SpaceIndex > 0)
                 {
-                    FirstName = name[0..SpaceIndex];
-                    LastName = name[(SpaceIndex + 1)..name.Length];
+                    FirstName = name[0..SpaceIndex].Trim();
+                    LastName = name[(SpaceIndex + 1)..name.Length].Trim();
                 } 
                 else
                 {
@@ -90,10 +115,9 @@ namespace Bank
             }
             else return false;
         }
-
         public List<string> RemoveCustomer(long pNr)
         {
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
                 List<string> tempList = new();
@@ -115,9 +139,8 @@ namespace Bank
             }
             else return null;
         }
-
         public int AddSavingsAccount(long pNr) {
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
                 if (c.GetListOfAccounts().Count > 0)
@@ -134,31 +157,29 @@ namespace Bank
             }
             else return -1;
         }
-
-        public string GetAccount(long pNr, int accountId){
-            Customer c = InternalGetCustomer(pNr);
+        public string GetAccount(long pNr, int accountId)
+        {
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
-                IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
-                if (temp.Count() == 1)
+                SavingsAccount sa = AccountHelper(c, accountId);
+                if (null == sa)
                 {
-                    SavingsAccount sa = temp.First();
                     return sa.ShowAccount();
                 }
-                else return null;
+                else return "You had more than one account with that account-number.";
             }
-            else return null;
+            else return "No customer with that Social Security Number.";
         }
 
         public Boolean Deposit(long pNr, int accountId, decimal amount)
         {
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
-                IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
-                if (temp.Count() == 1)
+                SavingsAccount sa = AccountHelper(c, accountId);
+                if (null != sa)
                 {
-                    SavingsAccount sa = temp.First();
                     sa.DepositAmount(amount);
                     return true;
                 }
@@ -169,13 +190,12 @@ namespace Bank
 
         public Boolean Withdraw(long pNr, int accountId, decimal amount)
         {
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
-                IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
-                if (temp.Count() == 1)
+                SavingsAccount sa = AccountHelper(c, accountId);
+                if (null != sa)
                 {
-                    SavingsAccount sa = temp.First();
                     return sa.WithdrawAmount(amount);
                 }
                 else return false;
@@ -185,63 +205,20 @@ namespace Bank
 
         public string CloseAccount(long pNr, int accountId)
         {
-            Customer c = InternalGetCustomer(pNr);
+            Customer c = CustomerHelper(pNr);
             if (null != c)
             {
-                IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
-                if (temp.Count() == 1)
+                SavingsAccount sa = AccountHelper(c, accountId);
+                if (null != sa)
                 {
-                    c.GetListOfAccounts().Remove(temp.First());
+                    string returnString = sa.ShowAccount();
+                    c.GetListOfAccounts().Remove(sa);
+                    return returnString;
                 }
+                else return "There was no account with that account-number.";
             }
+            else return "There was no user with that Social Security Number";
         }
 
-/*
-        public void CreateCustomerDialog() {
-            bool correctInfo = false;
-            string  FirstName = "";
-            string  LastName = "";
-            long    SSN = 0;
-            while (!correctInfo)
-            {
-                bool correctName = false;
-                while (!correctName)
-                {
-                    Console.WriteLine("Ny Kund:");
-                    Console.WriteLine("Vilket namn?");
-                    string inputString = Console.ReadLine();
-                    if ((inputString.Trim().Length > 0))
-                    {
-
-                    }
-                }
-            }
-        }
-*/
-        static void Main()
-        {
-            BankLogic b = new ();
-            long ssn = 8711110299;
-            if (b.AddCustomer("Peter Erik Eriksson", ssn))
-            {
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-                b.AddSavingsAccount(ssn);
-            }
-            b.Deposit(ssn, 1005, 2000);
-            b.Deposit(ssn, 1001, 93029);
-            b.Deposit(ssn, 1002, 54200);
-            Console.WriteLine(b.Withdraw(ssn, 1005, 1005));
-            b.RemoveCustomer(ssn).ForEach(line => Console.WriteLine(line));
-
-        }
     }
 }
