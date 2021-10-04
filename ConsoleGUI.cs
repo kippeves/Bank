@@ -163,7 +163,7 @@ namespace Bank
                             break;
                         case '4':
                             if (b.GetCurrentUser() == null)
-                            { 
+                            {
                                 Environment.Exit(0);
                             }
                             break;
@@ -174,6 +174,18 @@ namespace Bank
                 else if (GetCurrentMenu() == Menu.CREATE)
                 {
                     CreateUserMenu(b);
+                }
+                else if (GetCurrentMenu() == Menu.EDIT)
+                {
+                }
+                else if (GetCurrentMenu() == Menu.LOAD)
+                {
+                }
+                else if (GetCurrentMenu() == Menu.ACCOUNT)
+                {
+                }
+                else if (GetCurrentMenu() == Menu.DELETE)
+                {
                 }
             }
         }
