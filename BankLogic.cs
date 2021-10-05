@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Bank
 {
@@ -215,24 +216,38 @@ namespace Bank
             }
             return tempString;
         }
+
+
+
         static void Main()
         {
             BankLogic b = new();
-            /*            long ssn = 2827328;
-                        b.AddCustomer("John Andersson", ssn);
-                        Customer c = b.CustomerHelper(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.LoadedCustomer = c;
-                        b.LoadedAccount = null;*/
+            long ssn = 2827328;
+            b.AddCustomer("John Andersson", ssn);
+            Customer c = b.CustomerHelper(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
             while (true)
             {
+                StringBuilder sb = new("Välj scenario");
+                sb.AppendLine("1. Skriv ut en lista med bankens kunder (personnummer, för och efternamn) till en textfil");
+                sb.AppendLine("2. Lägg till en ny kund med ett unikt personnummer");
+                sb.AppendLine("3. Ändra en kunds namn (Personnummer ska inte kunna ändras )");
+                sb.AppendLine("4. Ta bort en befintlig kund, befintliga konton måste också avslutas");
+                sb.AppendLine("5. Skapa sparkonto till en befintlig kund.");
+                sb.AppendLine("6. Avsluta konto");
+                sb.AppendLine("7. Se information om vald kund");
+                sb.AppendLine("8. Sätta in pengar på ett konto");
+                sb.AppendLine("9. Ta ut pengar från ett konto (om saldot täcks)");
+                Console.WriteLine(sb);
+
                 switch (Console.ReadKey().KeyChar)
                 {
                     case '1':
+
                         break;
                     case '2':
                         break;
