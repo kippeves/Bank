@@ -322,7 +322,7 @@ namespace Bank
                             }
                             else
                             {
-                                Console.WriteLine("Du matade in fel personnummer.");
+                                Console.WriteLine("Felaktigt personnummer.");
                             }
 
                             Console.WriteLine("");
@@ -339,11 +339,39 @@ namespace Bank
                         
                         break;
                     case '5':
-                        
+                        string svar2 = "";
+                        while (svar2 != "nej")
+                        {
+                            foreach (var item in b.getAllCustomers())
+                            {
+                                Console.WriteLine(item);
+                            }
+                            Console.WriteLine("");
+                            Console.Write("Mata in personnummer på den kund som du vill skapa ett nytt konto åt: ");
+                            long svar3 = long.Parse(Console.ReadLine());
 
+                            int status = b.AddSavingsAccount(svar3);
+
+                            if (status == -1)
+                            {
+                                Console.WriteLine("Felaktigt personnummer.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Ett sparkonto skapades. Kontonummer {status}");
+                            }
+
+                            foreach (var item in b.getAllCustomers())
+                            {
+                                Console.WriteLine(item);
+                            }
+
+                            Console.Write("Vill du skapa yttligare ett sparkonto åt en befintlig kund? ja/nej ");
+                            svar2 = Console.ReadLine();
+                        }
+                        
                         break;
                     case '6':
-
                         break;
                     case '7':
                         break;
