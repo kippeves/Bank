@@ -118,8 +118,10 @@ namespace Bank
                     accounts.ForEach(a => sumOfInterest += a.CalculateInterest());
                     tempList.Add($"Sum of interest:\t" + sumOfInterest);
                     accounts.Clear();
+                    
                 }
                 else tempList.Add("You have no accounts...");
+                GetListOfCustomers().Remove(c);
                 return tempList;
             }
             else return null;
@@ -228,6 +230,14 @@ namespace Bank
                         b.AddSavingsAccount(ssn);
                         b.LoadedCustomer = c;
                         b.LoadedAccount = null;*/
+
+            long ssn = 9803251721;
+            long ssn1 = 9302139301;
+            long ssn2 = 8611237853;
+            b.AddCustomer("Björn Kalmarsson", ssn);
+            b.AddCustomer("Filippa Andersson", ssn1);
+            b.AddCustomer("Kalle Qvist", ssn2);
+
             while (true)
             {
                 switch (Console.ReadKey().KeyChar)
@@ -239,10 +249,48 @@ namespace Bank
                     case '3':
                         break;
                     case '4':
+                        string svar = "";
+                        while (svar != "nej")
+                        {
+                            
+                            Console.WriteLine("Mata in personnummret på kunden du vill ta bort. ");
+                            Console.WriteLine("");
+                            long svar1 = long.Parse(Console.ReadLine());
+                            if (svar1 == ssn)
+                            {
+                                b.RemoveCustomer(ssn);
+                            }
+                            else if (svar1 == ssn1)
+                            {
+                                b.RemoveCustomer(ssn1);
+                            }
+                            else if (svar1 == ssn2)
+                            {
+                                b.RemoveCustomer(ssn2);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Du matade in ett ogiltigt personnummer.");
+                                Console.WriteLine("");
+                                Console.WriteLine("Programmet avslutas.");
+                            }
+
+                            foreach (var item in b.getAllCustomers())
+                            {
+                                Console.WriteLine(item);
+                            }
+
+                            Console.WriteLine("Vill du ta bort yttligare en kund? ja/nej");
+                            svar = Console.ReadLine();
+                        }
+                        
                         break;
                     case '5':
+                        
+
                         break;
                     case '6':
+
                         break;
                     case '7':
                         break;
@@ -250,6 +298,9 @@ namespace Bank
                         break;
                     case '9':
                         break;
+
+                        Console.WriteLine("");
+                        Console.WriteLine("Programmet avslutas.");
                 }
             }
         }
