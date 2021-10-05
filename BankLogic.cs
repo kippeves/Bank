@@ -7,8 +7,6 @@ namespace Bank
 
     class BankLogic
     {
-        public Customer LoadedCustomer { get; set; }
-        public SavingsAccount LoadedAccount { get; set; }
         readonly private List<Customer> ListOfCustomers = new();
 
         public List<Customer> GetListOfCustomers() {
@@ -126,6 +124,7 @@ namespace Bank
             }
             else return null;
         }
+
         public int AddSavingsAccount(long pNr) {
             Customer c = CustomerHelper(pNr);
             if (null != c)
@@ -144,6 +143,7 @@ namespace Bank
             }
             else return -1;
         }
+
         public string GetAccount(long pNr, int accountId)
         {
             Customer c = CustomerHelper(pNr);
