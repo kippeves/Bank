@@ -253,8 +253,7 @@ namespace Bank
                         while (svar != "nej")
                         {
                             
-                            Console.WriteLine("Mata in personnummret på kunden du vill ta bort. ");
-                            Console.WriteLine("");
+                            Console.Write("Mata in personnummret på kunden du vill ta bort: ");
                             long svar1 = long.Parse(Console.ReadLine());
                             if (svar1 == ssn)
                             {
