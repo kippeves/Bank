@@ -13,7 +13,7 @@ namespace Bank
         EDIT,
         LOAD,
         ACCOUNT,
-        ACCOUNT_ALL,
+        SELECT,
         DELETE
     }
 
@@ -72,7 +72,7 @@ namespace Bank
                     b.AddSavingsAccount(c.SSN);
                     break;
                 case ConsoleKey.D2:
-
+                    SetCurrentMenu(Menu.SELECT);
                     break;
                 case ConsoleKey.D3:
                     break;
@@ -307,29 +307,43 @@ namespace Bank
             long ssn = 2827328;
             b.AddCustomer("John Andersson", ssn);
             Customer c = b.CustomerHelper(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
+            b.AddSavingsAccount(ssn);
             b.SetCurrentUser(c);
             b.SetCurrentAccount(null);
 
             while (true)
             {
-                if (GetCurrentMenu() == Menu.MAIN)
-                    MainMenu(b);
-                else if (GetCurrentMenu() == Menu.CREATE)
-                    CreateUserMenu(b);
-                else if (GetCurrentMenu() == Menu.EDIT)
-                    EditUserMenu(b);
-                else if (GetCurrentMenu() == Menu.LOAD)
-                    LoadUserMenu(b);
-                else if (GetCurrentMenu() == Menu.ACCOUNT)
-                    AccountMenu(b);
-                //                else if (GetCurrentMenu() == Menu.DELETE)
-                //               else if (GetCurrentMenu() == Menu.ACCOUNT_ALL)
+                switch (GetCurrentMenu())
+                {
+                    case Menu.MAIN:
+                        MainMenu(b);
+                        break;
+                    case Menu.CREATE:
+                        CreateUserMenu(b);
+                        break;
+                    case Menu.EDIT:
+                        EditUserMenu(b);
+                        break;
+                    case Menu.LOAD:
+                        LoadUserMenu(b);
+                        break;
+                    case Menu.ACCOUNT:
+                        AccountMenu(b);
+                        break;
+                    case Menu.SELECT:
+                        SelectAccount(b);
+                        break;
+                } 
             }
         }
 
         private static void LoadUserMenu(BankLogic b)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
