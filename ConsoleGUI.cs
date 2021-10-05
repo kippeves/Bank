@@ -19,7 +19,7 @@ namespace Bank
 
     public class ConsoleGUI
     {
-        static Menu Menu = Menu.MAIN;
+        static Menu Menu;
 
         private static bool ConfirmKey()
         {
@@ -43,7 +43,7 @@ namespace Bank
         private static void AccountMenu(BankLogic b)
         {
             Console.Clear();
-            Customer c = b.GetCurrentUser();
+            Customer c = b.LoadedCustomer;
             StringBuilder sb = new();
             int count = c.GetListOfAccounts().Count;
             if (count > 0)
@@ -91,9 +91,9 @@ namespace Bank
             int account;
             if (int.TryParse(Console.ReadLine(), out account))
             {
-                if (null != (sa = b.AccountHelper(b.GetCurrentUser(), account)))
+                if (null != (sa = b.AccountHelper(b.LoadedCustomer, account)))
                 {
-                    b.SetCurrentAccount(sa);
+                    b.LoadedAccount = sa;
                 }
                 else Console.WriteLine("Could not find account. Try again.");
             }
@@ -102,9 +102,10 @@ namespace Bank
 
         private static void MainMenu(BankLogic b)
         {
+            Customer c = b.LoadedCustomer;
             Console.Clear();
             StringBuilder sb = new("Choose an option:\n");
-            if (b.GetCurrentUser() == null)
+            if (null != c)
             {
                 sb.AppendLine("1. Create User");
                 sb.AppendLine("2. Load User");
@@ -113,7 +114,7 @@ namespace Bank
             }
             else
             {
-                sb.AppendLine($"Logged in user: {b.GetCurrentUser().FullName}");
+                sb.AppendLine($"Logged in user: {c.FullName}");
                 sb.AppendLine("1. Accounts");
                 sb.AppendLine("2. Edit User");
                 sb.AppendLine("3. Log Out");
@@ -129,21 +130,21 @@ namespace Bank
             switch (Console.ReadKey(intercept: true).Key)
             {
                 case ConsoleKey.D1:
-                    SetCurrentMenu((b.GetCurrentUser() == null) ? Menu.CREATE : Menu.ACCOUNT);
+                    SetCurrentMenu((b.LoadedCustomer == null) ? Menu.CREATE : Menu.ACCOUNT);
                     break;
                 case ConsoleKey.D2:
-                    if (b.GetCurrentUser() == null)
+                    if (null == c)
                     {
                         SetCurrentMenu(Menu.LOAD);
                     }
                     else SetCurrentMenu(Menu.EDIT);
                     break;
                 case ConsoleKey.D3:
-                    if (b.GetCurrentUser() == null)
+                    if (null == c)
                     {
                         SetCurrentMenu(Menu.DELETE);
                     }
-                    else b.SetCurrentUser(null);
+                    else b.LoadedCustomer = null;
                     break;
                 case ConsoleKey.D4:
                     Environment.Exit(0);
@@ -155,9 +156,10 @@ namespace Bank
         private static void CreateUserMenu(BankLogic b)
         {
             StringBuilder sb = new("Do you want to create a user?\n");
-            if (b.GetCurrentUser() != null)
+            Customer c = b.LoadedCustomer;
+            if (null != c)
             {
-                sb.AppendLine("You appear to already have a user (" + b.GetCurrentUser().FullName + ") active");
+                sb.AppendLine("You appear to already have a user (" + c.FullName + ") active");
                 sb.AppendLine("You can only have one user loaded concurrently.");
                 sb.AppendLine("If you create a new one your current one will be logged out.");
             }
@@ -207,7 +209,7 @@ namespace Bank
                                 Console.WriteLine("You successfully registered in our system.");
                                 Console.WriteLine("You will now be returned to the Main Menu.");
                                 CreatedUser = true;
-                                b.SetCurrentUser(b.CustomerHelper(pNr));
+                                b.LoadedCustomer = b.CustomerHelper(pNr);
                                 SetCurrentMenu(Menu.MAIN);
                                 System.Threading.Thread.Sleep(1000);
                             }
@@ -230,7 +232,7 @@ namespace Bank
         {
             Console.Clear();
             StringBuilder sb = new("Edit User:\n");
-            Customer c = b.GetCurrentUser();
+            Customer c = b.LoadedCustomer;
             if (null != c)
             {
                 sb.AppendLine($"Current user: {c.FullName}");
@@ -312,9 +314,9 @@ namespace Bank
             b.AddSavingsAccount(ssn);
             b.AddSavingsAccount(ssn);
             b.AddSavingsAccount(ssn);
-            b.SetCurrentUser(c);
-            b.SetCurrentAccount(null);
-
+            b.LoadedCustomer = c;
+            b.LoadedAccount = null;
+            SetCurrentMenu(Menu.MAIN);
             while (true)
             {
                 switch (GetCurrentMenu())

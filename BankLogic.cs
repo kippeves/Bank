@@ -7,27 +7,10 @@ namespace Bank
 
     class BankLogic
     {
-        private Customer LoadedCustomer;
-        private SavingsAccount LoadedAccount;
+        public Customer LoadedCustomer { get; set; }
+        public SavingsAccount LoadedAccount { get; set; }
         readonly private List<Customer> ListOfCustomers = new();
 
-
-        public SavingsAccount GetCurrentAccount()
-        {
-            return LoadedAccount;
-        }
-
-        public void SetCurrentAccount(SavingsAccount sa)
-        {
-            LoadedAccount = sa;
-        }
-
-        public Customer GetCurrentUser() {
-            return LoadedCustomer;
-        }
-        public void SetCurrentUser(Customer c) {
-            LoadedCustomer = c;
-        }
         public List<Customer> GetListOfCustomers() {
             return ListOfCustomers;
         }
