@@ -210,9 +210,9 @@ namespace Bank
                     c.GetListOfAccounts().Remove(sa);
                     return returnString;
                 }
-                else return "There was no account with that account-number.";
+                else return null;
             }
-            else return "There was no user with that Social Security Number";
+            else return null;
         }
 
         public List<string> getAllCustomers()
@@ -386,7 +386,7 @@ namespace Bank
                             }
                             Console.WriteLine("");
                             Console.WriteLine("Vill du ta bort yttligare en kund? ja/nej");
-                            svar = Console.ReadLine();
+                            svar = Console.ReadLine().ToLower();
                         }
 
                         break;
@@ -419,12 +419,39 @@ namespace Bank
                             }
 
                             Console.Write("Vill du skapa yttligare ett sparkonto åt en befintlig kund? ja/nej ");
-                            svar2 = Console.ReadLine();
+                            svar2 = Console.ReadLine().ToLower();
                         }
-
                         break;
                     case '6':
+                        string svar5 = "";
+                        while (svar5 != "nej")
+                        {
+                            foreach (var item in b.getAllCustomers())
+                            {
+                            Console.WriteLine(item);
+                            }
+                            Console.WriteLine("");
+                            Console.Write("Mata in det personnummer till det kontot du vill avsluta: ");
+                            long svar6 = long.Parse(Console.ReadLine());
 
+                            Console.WriteLine(" ");
+
+                            Console.Write("Mata in konto Id till kontot du vill avsluta: ");
+                            int svar7 = int.Parse(Console.ReadLine());
+                            string status = b.CloseAccount(svar6, svar7);
+
+                            if (status != null)
+                            {
+                                Console.WriteLine("Ditt konto har tagits bort.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Felaktig inmatning!");
+                            }
+
+                            Console.WriteLine("Vill du ta bort yttligare ett konto? ja/nej");
+                            svar5 = Console.ReadLine().ToLower();
+                        }
                         break;
                     case '7':
                         break;
