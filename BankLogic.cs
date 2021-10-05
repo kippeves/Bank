@@ -11,7 +11,8 @@ namespace Bank
     {
         readonly private List<Customer> ListOfCustomers = new();
 
-        public List<Customer> GetListOfCustomers() {
+        public List<Customer> GetListOfCustomers()
+        {
             return ListOfCustomers;
         }
         public Customer CustomerHelper(long ssn)
@@ -24,7 +25,8 @@ namespace Bank
             else return null;
         }
 
-        public SavingsAccount AccountHelper(Customer c, int accountId) {
+        public SavingsAccount AccountHelper(Customer c, int accountId)
+        {
             IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
             if (temp.Count() == 1)
             {
@@ -40,7 +42,7 @@ namespace Bank
             return returnList;
         }
 
-        public bool AddCustomer(string name, long pNr) 
+        public bool AddCustomer(string name, long pNr)
         {
             int SpaceIndex = name.LastIndexOf(" ");
             string FirstName;
@@ -50,7 +52,8 @@ namespace Bank
                 FirstName = name[0..SpaceIndex].Trim();
                 LastName = name[(SpaceIndex + 1)..name.Length].Trim();
             }
-            else { 
+            else
+            {
                 FirstName = name;
                 LastName = "";
             }
@@ -78,8 +81,8 @@ namespace Bank
             else return null;
         }
 
-        public bool ChangeCustomerName(String name, long pNr) {
-
+        public bool ChangeCustomerName(String name, long pNr)
+        {
             Customer c = CustomerHelper(pNr);
             if (null != c)
             {
@@ -90,7 +93,7 @@ namespace Bank
                 {
                     FirstName = name[0..SpaceIndex].Trim();
                     LastName = name[(SpaceIndex + 1)..name.Length].Trim();
-                } 
+                }
                 else
                 {
                     FirstName = name;
@@ -120,7 +123,7 @@ namespace Bank
                     accounts.ForEach(a => sumOfInterest += a.CalculateInterest());
                     tempList.Add($"Sum of interest:\t" + sumOfInterest);
                     accounts.Clear();
-                    
+
                 }
                 else tempList.Add("You have no accounts...");
                 GetListOfCustomers().Remove(c);
@@ -129,7 +132,8 @@ namespace Bank
             else return null;
         }
 
-        public int AddSavingsAccount(long pNr) {
+        public int AddSavingsAccount(long pNr)
+        {
             Customer c = CustomerHelper(pNr);
             if (null != c)
             {
@@ -210,28 +214,23 @@ namespace Bank
             }
             else return "There was no user with that Social Security Number";
         }
+
         public List<string> getAllCustomers()
         {
             List<string> tempString = new();
             foreach (Customer c in GetListOfCustomers())
             {
-                GetCustomer(c.SSN).ForEach(line=>tempString.Add(line));
+                GetCustomer(c.SSN).ForEach(line => tempString.Add(line));
             }
             return tempString;
         }
 
-
-        public void PrintListOfCustomers(BankLogic b) {
-
-        }
-
-
         static void Main()
         {
             BankLogic b = new();
-            long[] ssn = { 
-                234823, 
-                373287, 
+            long[] ssn = {
+                234823,
+                373287,
                 585932,
                 174783,
                 714822,
@@ -246,12 +245,11 @@ namespace Bank
             Random r = new();
             foreach (Customer c in b.GetListOfCustomers())
             {
-                for (int i = 0; i < r.Next(1,15); i++)
+                for (int i = 0; i < r.Next(1, 15); i++)
                 {
                     b.AddSavingsAccount(c.SSN);
                 }
             }
-
 
             bool loop = true;
             while (loop)
@@ -270,13 +268,14 @@ namespace Bank
                 Console.WriteLine(sb);
                 sb.Length = 0;
                 List<string> customers = b.getAllCustomers();
-                switch (Console.ReadKey(intercept:true).KeyChar)
+                switch (Console.ReadKey(intercept: true).KeyChar)
                 {
 
-                        case '1':
+                    case '1':
                         Console.Clear();
                         Console.WriteLine("Creating the text-file \"list.txt\" in the running directory.");
-                        foreach (string line in customers) {
+                        foreach (string line in customers)
+                        {
                             sb.AppendLine(line);
                         }
                         Console.WriteLine(sb);
@@ -284,17 +283,74 @@ namespace Bank
                         // Create a file to write to.
                         using (StreamWriter sw = File.CreateText(path))
                         {
-                               sw.WriteLine(sb);
+                            sw.WriteLine(sb);
                         }
                         Console.WriteLine($"List written to {path}");
 
                         Console.ReadLine();
                         Console.Clear();
                         break;
-                    case '2':
 
+                    case '2':
+                        string name;
+                        bool correctSSN;
+                        long pNr;
+                        do
+                        {
+                            Console.WriteLine("What is your name?");
+                            name = Console.ReadLine();
+                        } while (name.Trim().Length == 0);
+                        Console.WriteLine();
+                        do
+                        {
+                            Console.WriteLine("What is your social security number?");
+                            correctSSN = long.TryParse(Console.ReadLine(), out pNr);
+                            if (!correctSSN)
+                            {
+                                Console.WriteLine("You did not enter your number correctly. Please try again.");
+                            }
+                        } while (!correctSSN);
+                        sb.AppendLine("Information to be put in the system:");
+                        sb.AppendLine($"Name:\t{name}");
+                        sb.AppendLine($"SSN:\t{pNr}");
+                        Console.WriteLine(sb);
+                        Console.WriteLine();
+                        bool registeredUser = b.AddCustomer(name, pNr);
+                        if (registeredUser)
+                        {
+                            Console.WriteLine("You successfully registered in our system.");
+                            Console.WriteLine("You will now be returned to the Main Menu.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("You could not be registered into the system.");
+                            Console.WriteLine("Do you already have a user with that Social Security Number registered?");
+                        }
+                        Console.WriteLine();
                         break;
+
                     case '3':
+                        Console.WriteLine("Vilken användare vill du ändra namn på?");
+                        foreach (Customer c in b.GetListOfCustomers())
+                        {
+                            Console.WriteLine($"{c.SSN}: {c.FullName}");
+                        }
+                        do
+                        {
+                            Console.WriteLine("What is your social security number?");
+                            correctSSN = long.TryParse(Console.ReadLine(), out pNr);
+                            if (!correctSSN)
+                            {
+                                Console.WriteLine("You did not enter your number correctly. Please try again.");
+                            }
+                        } while (!correctSSN);
+                        do
+                        {
+                            Console.WriteLine("What name do you want to change to?");
+                            name = Console.ReadLine();
+                        }
+                        while (name.Trim().Length == 0);
+                        b.ChangeCustomerName(name, pNr);
                         break;
                     case '4':
                         foreach (var item in b.getAllCustomers())
@@ -304,21 +360,18 @@ namespace Bank
                         string svar = "";
                         while (svar != "nej")
                         {
-                            
-                            Console.Write("Mata in personnummret på kunden du vill ta bort: ");
-                            
-                            long svar1 = long.Parse(Console.ReadLine());
 
+                            Console.Write("Mata in personnummret på kunden du vill ta bort: ");
+                            long svar1 = long.Parse(Console.ReadLine());
                             List<string> s;
-                            if ((s = b.RemoveCustomer(svar1)) != null) 
+                            if ((s = b.RemoveCustomer(svar1)) != null)
                             {
-                                Console.WriteLine("Du tog bort denna kund: ");
+                                Console.WriteLine("Du tog bort denna kund:");
                                 Console.WriteLine("");
                                 foreach (var item in s)
                                 {
                                     Console.WriteLine(item);
                                 }
-                                
                             }
                             else
                             {
@@ -336,40 +389,11 @@ namespace Bank
                             Console.WriteLine("Vill du ta bort yttligare en kund? ja/nej");
                             svar = Console.ReadLine();
                         }
-                        
+
                         break;
                     case '5':
-                        string svar2 = "";
-                        while (svar2 != "nej")
-                        {
-                            foreach (var item in b.getAllCustomers())
-                            {
-                                Console.WriteLine(item);
-                            }
-                            Console.WriteLine("");
-                            Console.Write("Mata in personnummer på den kund som du vill skapa ett nytt konto åt: ");
-                            long svar3 = long.Parse(Console.ReadLine());
-
-                            int status = b.AddSavingsAccount(svar3);
-
-                            if (status == -1)
-                            {
-                                Console.WriteLine("Felaktigt personnummer.");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Ett sparkonto skapades. Kontonummer {status}");
-                            }
-
-                            foreach (var item in b.getAllCustomers())
-                            {
-                                Console.WriteLine(item);
-                            }
-
-                            Console.Write("Vill du skapa yttligare ett sparkonto åt en befintlig kund? ja/nej ");
-                            svar2 = Console.ReadLine();
-                        }
                         
+
                         break;
                     case '6':
                         break;
@@ -382,6 +406,7 @@ namespace Bank
                     case '0':
                         loop = false;
                         break;
+
                 }
             }
         }
