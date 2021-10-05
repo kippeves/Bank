@@ -7,8 +7,6 @@ namespace Bank
 
     class BankLogic
     {
-        public Customer LoadedCustomer { get; set; }
-        public SavingsAccount LoadedAccount { get; set; }
         readonly private List<Customer> ListOfCustomers = new();
 
         public List<Customer> GetListOfCustomers() {
@@ -126,6 +124,7 @@ namespace Bank
             }
             else return null;
         }
+
         public int AddSavingsAccount(long pNr) {
             Customer c = CustomerHelper(pNr);
             if (null != c)
@@ -144,6 +143,7 @@ namespace Bank
             }
             else return -1;
         }
+
         public string GetAccount(long pNr, int accountId)
         {
             Customer c = CustomerHelper(pNr);
@@ -214,6 +214,44 @@ namespace Bank
                 GetCustomer(c.SSN).ForEach(line=>tempString.Add(line));
             }
             return tempString;
+        }
+        static void Main()
+        {
+            BankLogic b = new();
+            /*            long ssn = 2827328;
+                        b.AddCustomer("John Andersson", ssn);
+                        Customer c = b.CustomerHelper(ssn);
+                        b.AddSavingsAccount(ssn);
+                        b.AddSavingsAccount(ssn);
+                        b.AddSavingsAccount(ssn);
+                        b.AddSavingsAccount(ssn);
+                        b.AddSavingsAccount(ssn);
+                        b.LoadedCustomer = c;
+                        b.LoadedAccount = null;*/
+            while (true)
+            {
+                switch (Console.ReadKey().KeyChar)
+                {
+                    case '1':
+                        break;
+                    case '2':
+                        break;
+                    case '3':
+                        break;
+                    case '4':
+                        break;
+                    case '5':
+                        break;
+                    case '6':
+                        break;
+                    case '7':
+                        break;
+                    case '8':
+                        break;
+                    case '9':
+                        break;
+                }
+            }
         }
     }
 }
