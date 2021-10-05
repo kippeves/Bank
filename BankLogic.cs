@@ -273,7 +273,7 @@ namespace Bank
 
                     case '1':
                         Console.Clear();
-                        Console.WriteLine("Creating the text-file \"list.txt\" in the running directory.");
+                        Console.WriteLine("Skapar textfilen \"list.txt\" i mappen som .EXE-filen körs i.");
                         foreach (string line in customers)
                         {
                             sb.AppendLine(line);
@@ -285,7 +285,7 @@ namespace Bank
                         {
                             sw.WriteLine(sb);
                         }
-                        Console.WriteLine($"List written to {path}");
+                        Console.WriteLine($"Lista skriven till {path}");
 
                         Console.ReadLine();
                         Console.Clear();
@@ -297,33 +297,32 @@ namespace Bank
                         long pNr;
                         do
                         {
-                            Console.WriteLine("What is your name?");
+                            Console.WriteLine("Vad är ditt namn?");
                             name = Console.ReadLine();
                         } while (name.Trim().Length == 0);
                         Console.WriteLine();
                         do
                         {
-                            Console.WriteLine("What is your social security number?");
+                            Console.WriteLine("Vad är ditt personnummer?");
                             correctSSN = long.TryParse(Console.ReadLine(), out pNr);
                             if (!correctSSN)
                             {
-                                Console.WriteLine("You did not enter your number correctly. Please try again.");
+                                Console.WriteLine("Du skrev inte in ditt nummer korrekt. Vänligen försök igen");
                             }
                         } while (!correctSSN);
-                        sb.AppendLine("Information to be put in the system:");
-                        sb.AppendLine($"Name:\t{name}");
-                        sb.AppendLine($"SSN:\t{pNr}");
+                        sb.AppendLine("Denna information kommer att sparas:");
+                        sb.AppendLine($"Namn:\t{name}");
+                        sb.AppendLine($"Personnummer:\t{pNr}");
                         Console.WriteLine(sb);
                         Console.WriteLine();
                         bool registeredUser = b.AddCustomer(name, pNr);
                         if (registeredUser)
                         {
-                            Console.WriteLine("You successfully registered in our system.");
-                            Console.WriteLine("You will now be returned to the Main Menu.");
+                            Console.WriteLine("Din användare lades till i listan.");
                         }
                         else
                         {
-                            Console.WriteLine("You could not be registered into the system.");
+                            Console.WriteLine("Du kunde inte läggas till i systemet");
                             Console.WriteLine("Do you already have a user with that Social Security Number registered?");
                         }
                         Console.WriteLine();
