@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bank
 {
@@ -11,6 +9,8 @@ namespace Bank
     {
         private Customer LoadedCustomer;
         private SavingsAccount LoadedAccount;
+        readonly private List<Customer> ListOfCustomers = new();
+
 
         public SavingsAccount GetCurrentAccount()
         {
@@ -28,7 +28,6 @@ namespace Bank
         public void SetCurrentUser(Customer c) {
             LoadedCustomer = c;
         }
-        readonly private List<Customer> ListOfCustomers = new();
         public List<Customer> GetListOfCustomers() {
             return ListOfCustomers;
         }
@@ -41,6 +40,7 @@ namespace Bank
             }
             else return null;
         }
+
         public SavingsAccount AccountHelper(Customer c, int accountId) {
             IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
             if (temp.Count() == 1)
@@ -49,12 +49,14 @@ namespace Bank
             }
             else return null;
         }
+
         public List<String> GetCustomers()
         {
             List<string> returnList = new();
             ListOfCustomers.ForEach(cust => returnList.Add("Personnummer: " + cust.SSN + ", Namn: " + cust.FullName));
             return returnList;
         }
+
         public bool AddCustomer(string name, long pNr) 
         {
             int SpaceIndex = name.LastIndexOf(" ");
@@ -78,6 +80,7 @@ namespace Bank
             }
             else return false;
         }
+
         public List<string> GetCustomer(long pNr)
         {
             List<string> TempList = new();
@@ -91,6 +94,7 @@ namespace Bank
             }
             else return null;
         }
+
         public bool ChangeCustomerName(String name, long pNr) {
 
             Customer c = CustomerHelper(pNr);
@@ -219,6 +223,14 @@ namespace Bank
             }
             else return "There was no user with that Social Security Number";
         }
-
+        public List<string> getAllCustomers()
+        {
+            List<string> tempString = new();
+            foreach (Customer c in GetListOfCustomers())
+            {
+                GetCustomer(c.SSN).ForEach(line=>tempString.Add(line));
+            }
+            return tempString;
+        }
     }
 }

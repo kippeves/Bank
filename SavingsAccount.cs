@@ -4,10 +4,10 @@ namespace Bank
 {
     class SavingsAccount
     {
-        private decimal             Amount;
-        private readonly double Interest = 1;
-        private readonly string     AccountType = "Savings";
-        private readonly int                 AccountNo;
+        private decimal                     Amount;
+        private readonly double             Interest = 1;
+        private readonly string             AccountType = "Savings";
+        private readonly int                AccountNo;
 
         public SavingsAccount(int AccountNo)
         {
@@ -21,7 +21,6 @@ namespace Bank
 
         public bool WithdrawAmount(decimal amount)
         {
-            
             if ((this.Amount - amount) >= 0)
             {
                 this.Amount -= amount;
@@ -42,7 +41,7 @@ namespace Bank
 
         public Decimal CalculateInterest()
         {
-            return ((this.Amount * (decimal)Interest) / 100);
+            return (this.Amount * ((decimal)Interest) / 100);
         }
 
         public int GetAccountNo() {

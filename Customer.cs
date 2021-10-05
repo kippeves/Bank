@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Bank
 {
@@ -44,10 +40,10 @@ namespace Bank
         {
             this.SetFirstName(FirstName);
             this.SetLastName(LastName);
-            this.SSN        =   ssn;
-            listOfAccounts = (new());
+            this.SSN = ssn;
+            listOfAccounts = new();
         }
-
+         
         public List<string> PrintAccounts()
         {
             List<string> tempList = new();
@@ -57,7 +53,5 @@ namespace Bank
             }
             return tempList;
         }
-
-
     }
 }

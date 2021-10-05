@@ -13,6 +13,7 @@ namespace Bank
         EDIT,
         LOAD,
         ACCOUNT,
+        ACCOUNT_ALL,
         DELETE
     }
 
@@ -39,12 +40,124 @@ namespace Bank
             Menu = m;
         }
 
-        private static void CreateUserMenu(BankLogic BankInstance)
+        private static void AccountMenu(BankLogic b)
+        {
+            Console.Clear();
+            Customer c = b.GetCurrentUser();
+            StringBuilder sb = new();
+            int count = c.GetListOfAccounts().Count;
+            if (count > 0)
+            {
+                c.GetListOfAccounts().ForEach(account => sb.AppendLine(account.ShowAccount()));
+            }
+            else
+            {
+                sb.AppendLine("You do not seem to have any accounts open");
+                sb.AppendLine("Do you wish to open an account? Select an option below:");
+            }
+            sb.AppendLine("1. Open Account");
+            if (count > 0)
+            {
+                sb.AppendLine("2. Select Account");
+                sb.AppendLine("3. Close Account");
+                sb.AppendLine("4. Exit");
+            }
+            else { 
+                sb.AppendLine("2. Exit");
+            }
+            Console.WriteLine(sb);
+            switch (Console.ReadKey(intercept: true).Key)
+            {
+                case ConsoleKey.D1:
+                    b.AddSavingsAccount(c.SSN);
+                    break;
+                case ConsoleKey.D2:
+
+                    break;
+                case ConsoleKey.D3:
+                    break;
+                case ConsoleKey.D4:
+                    break;
+                default:
+                    break;
+            }
+            Console.Clear();
+        }
+
+        private static void SelectAccount(BankLogic b)
+        {
+            SavingsAccount sa;
+            StringBuilder sb = new("What account do you want to select?");
+            int account;
+            if (int.TryParse(Console.ReadLine(), out account))
+            {
+                if (null != (sa = b.AccountHelper(b.GetCurrentUser(), account)))
+                {
+                    b.SetCurrentAccount(sa);
+                }
+                else Console.WriteLine("Could not find account. Try again.");
+            }
+
+        }
+
+        private static void MainMenu(BankLogic b)
+        {
+            Console.Clear();
+            StringBuilder sb = new("Choose an option:\n");
+            if (b.GetCurrentUser() == null)
+            {
+                sb.AppendLine("1. Create User");
+                sb.AppendLine("2. Load User");
+                sb.AppendLine("3. Delete User");
+                sb.AppendLine("4. Exit");
+            }
+            else
+            {
+                sb.AppendLine($"Logged in user: {b.GetCurrentUser().FullName}");
+                sb.AppendLine("1. Accounts");
+                sb.AppendLine("2. Edit User");
+                sb.AppendLine("3. Log Out");
+                sb.AppendLine("4. Exit");
+            }
+            sb.AppendLine();
+            sb.AppendLine("Information for reference");
+            b.getAllCustomers().ForEach(line => sb.AppendLine(line));
+            sb.AppendLine();
+            sb.Append("Select an option:");
+            Console.Write(sb);
+
+            switch (Console.ReadKey(intercept: true).Key)
+            {
+                case ConsoleKey.D1:
+                    SetCurrentMenu((b.GetCurrentUser() == null) ? Menu.CREATE : Menu.ACCOUNT);
+                    break;
+                case ConsoleKey.D2:
+                    if (b.GetCurrentUser() == null)
+                    {
+                        SetCurrentMenu(Menu.LOAD);
+                    }
+                    else SetCurrentMenu(Menu.EDIT);
+                    break;
+                case ConsoleKey.D3:
+                    if (b.GetCurrentUser() == null)
+                    {
+                        SetCurrentMenu(Menu.DELETE);
+                    }
+                    else b.SetCurrentUser(null);
+                    break;
+                case ConsoleKey.D4:
+                    Environment.Exit(0);
+                    break;
+                default:
+                    break;
+            }
+        }
+        private static void CreateUserMenu(BankLogic b)
         {
             StringBuilder sb = new("Do you want to create a user?\n");
-            if (BankInstance.GetCurrentUser() != null)
+            if (b.GetCurrentUser() != null)
             {
-                sb.AppendLine("You appear to already have a user (" + BankInstance.GetCurrentUser().FullName + ") active");
+                sb.AppendLine("You appear to already have a user (" + b.GetCurrentUser().FullName + ") active");
                 sb.AppendLine("You can only have one user loaded concurrently.");
                 sb.AppendLine("If you create a new one your current one will be logged out.");
             }
@@ -88,13 +201,13 @@ namespace Bank
                         Console.WriteLine(sb);
                         if (ConfirmKey())
                         {
-                            bool registeredUser = BankInstance.AddCustomer(name, pNr);
+                            bool registeredUser = b.AddCustomer(name, pNr);
                             if (registeredUser)
                             {
                                 Console.WriteLine("You successfully registered in our system.");
                                 Console.WriteLine("You will now be returned to the Main Menu.");
                                 CreatedUser = true;
-                                BankInstance.SetCurrentUser(BankInstance.CustomerHelper(pNr));
+                                b.SetCurrentUser(b.CustomerHelper(pNr));
                                 SetCurrentMenu(Menu.MAIN);
                                 System.Threading.Thread.Sleep(1000);
                             }
@@ -113,93 +226,110 @@ namespace Bank
                     break;
             }
         }
+        private static void EditUserMenu(BankLogic b)
+        {
+            Console.Clear();
+            StringBuilder sb = new("Edit User:\n");
+            Customer c = b.GetCurrentUser();
+            if (null != c)
+            {
+                sb.AppendLine($"Current user: {c.FullName}");
+                sb.AppendLine("1. Change First Name.");
+                sb.AppendLine("2. Change Surname.");
+                sb.AppendLine("3. Exit");
+            }
+            else
+            {
+                sb.Length = 0;
+                sb.AppendLine("You really shouldn't be here...");
+            }
+            Console.WriteLine(sb);
+            String tempString = null;
+            bool Confirm;
+            switch (Console.ReadKey(intercept: true).Key)
+            {
+                case ConsoleKey.D1:
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("What is your new name?");
+                        tempString = Console.ReadLine().Trim();
+                        if (tempString.Length > 0)
+                        {
+                            Console.WriteLine($"\"{tempString}\".");
+                            Console.WriteLine("Is that correct? (Y/N)");
+                            Confirm = ConfirmKey();
+                            if (Confirm)
+                            {
+                                c.SetFirstName(tempString);
+                            }
+                        }
+                        else
+                        {
+                            Confirm = true;
+                        }
+                    } while (!Confirm);
+                    break;
+                case ConsoleKey.D2:
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("What is your new name?");
+                        tempString = Console.ReadLine().Trim();
+                        if (tempString.Length > 0)
+                        {
+                            Console.WriteLine($"\"{tempString}\".");
+                            Console.WriteLine("Is that correct? (Y/N)");
+                            Confirm = ConfirmKey();
+                            if (Confirm)
+                            {
+                                c.SetLastName(tempString);
+                            }
+                        }
+                        else
+                        {
+                            Confirm = true;
+                        }
+                    } while (!Confirm);
+                    break;
+                case ConsoleKey.D3:
+                    SetCurrentMenu(Menu.MAIN);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
 
         static void Main()
         {
-            long ssn = 12391823723;
             BankLogic b = new();
-            b.AddCustomer("TestKund",ssn);
-            b.AddSavingsAccount(ssn);
+            long ssn = 2827328;
+            b.AddCustomer("John Andersson", ssn);
             Customer c = b.CustomerHelper(ssn);
-            foreach (var line in b.GetCustomer(ssn))
-            {
-                Console.WriteLine(line);
-            }
-
-            /*
-            BankLogic b = new();
-            b.SetCurrentUser(null);
+            b.SetCurrentUser(c);
             b.SetCurrentAccount(null);
+
             while (true)
             {
-                Console.Clear();
                 if (GetCurrentMenu() == Menu.MAIN)
-                {
-                    StringBuilder sb = new("Choose an option:\n");
-                    if (b.GetCurrentUser() == null)
-                    {
-                        sb.AppendLine("1. Create User");
-                        sb.AppendLine("2. Load User");
-                        sb.AppendLine("3. Delete User");
-                        sb.AppendLine("4. Exit");
-
-                    }
-                    else {
-                        sb.AppendLine($"Logged in user: {b.GetCurrentUser().FullName}");
-                        sb.AppendLine("1. View Accounts");
-                        sb.AppendLine("2. Log Out");
-                        sb.AppendLine("3. Exit");
-
-                    }
-                    sb.AppendLine("Select an option:");
-                    Console.WriteLine(sb);
-                    switch (Console.ReadKey().KeyChar)
-                    {
-                        case '1':
-                            SetCurrentMenu((b.GetCurrentUser() == null) ? Menu.CREATE : Menu.ACCOUNT);
-                            break;
-                        case '2':
-                            if (b.GetCurrentUser() == null)
-                            {
-                                SetCurrentMenu(Menu.LOAD);
-                            }
-                            else b.SetCurrentUser(null);
-                            break;
-                        case '3':
-                            if (b.GetCurrentUser() == null)
-                            {
-                                SetCurrentMenu(Menu.DELETE);
-                            }
-                            else Environment.Exit(0);
-                            break;
-                        case '4':
-                            if (b.GetCurrentUser() == null)
-                            {
-                                Environment.Exit(0);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                    MainMenu(b);
                 else if (GetCurrentMenu() == Menu.CREATE)
-                {
                     CreateUserMenu(b);
-                }
                 else if (GetCurrentMenu() == Menu.EDIT)
-                {
-                }
+                    EditUserMenu(b);
                 else if (GetCurrentMenu() == Menu.LOAD)
-                {
-                }
+                    LoadUserMenu(b);
                 else if (GetCurrentMenu() == Menu.ACCOUNT)
-                {
-                }
-                else if (GetCurrentMenu() == Menu.DELETE)
-                {
-                }
+                    AccountMenu(b);
+                //                else if (GetCurrentMenu() == Menu.DELETE)
+                //               else if (GetCurrentMenu() == Menu.ACCOUNT_ALL)
             }
-            */
+        }
+
+        private static void LoadUserMenu(BankLogic b)
+        {
+            throw new NotImplementedException();
         }
     }
 }
