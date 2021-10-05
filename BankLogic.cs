@@ -297,36 +297,42 @@ namespace Bank
                     case '3':
                         break;
                     case '4':
+                        foreach (var item in b.getAllCustomers())
+                        {
+                            Console.WriteLine(item);
+                        }
                         string svar = "";
                         while (svar != "nej")
                         {
                             
                             Console.Write("Mata in personnummret på kunden du vill ta bort: ");
+                            
                             long svar1 = long.Parse(Console.ReadLine());
-                            if (svar1 == ssn)
+
+                            List<string> s;
+                            if ((s = b.RemoveCustomer(svar1)) != null) 
                             {
-                                b.RemoveCustomer(ssn);
-                            }
-                            else if (svar1 == ssn1)
-                            {
-                                b.RemoveCustomer(ssn1);
-                            }
-                            else if (svar1 == ssn2)
-                            {
-                                b.RemoveCustomer(ssn2);
+                                Console.WriteLine("Du tog bort denna kund: ");
+                                Console.WriteLine("");
+                                foreach (var item in s)
+                                {
+                                    Console.WriteLine(item);
+                                }
+                                
                             }
                             else
                             {
-                                Console.WriteLine("Du matade in ett ogiltigt personnummer.");
-                                Console.WriteLine("");
-                                Console.WriteLine("Programmet avslutas.");
+                                Console.WriteLine("Du matade in fel personnummer.");
                             }
+
+                            Console.WriteLine("");
+                            Console.WriteLine("");
 
                             foreach (var item in b.getAllCustomers())
                             {
                                 Console.WriteLine(item);
                             }
-
+                            Console.WriteLine("");
                             Console.WriteLine("Vill du ta bort yttligare en kund? ja/nej");
                             svar = Console.ReadLine();
                         }
