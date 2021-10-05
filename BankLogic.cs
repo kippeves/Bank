@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Bank
 {
@@ -217,34 +219,80 @@ namespace Bank
             }
             return tempString;
         }
+
+
+        public void PrintListOfCustomers(BankLogic b) {
+
+        }
+
+
         static void Main()
         {
             BankLogic b = new();
-            /*            long ssn = 2827328;
-                        b.AddCustomer("John Andersson", ssn);
-                        Customer c = b.CustomerHelper(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.AddSavingsAccount(ssn);
-                        b.LoadedCustomer = c;
-                        b.LoadedAccount = null;*/
-
-            long ssn = 9803251721;
-            long ssn1 = 9302139301;
-            long ssn2 = 8611237853;
-            b.AddCustomer("Björn Kalmarsson", ssn);
-            b.AddCustomer("Filippa Andersson", ssn1);
-            b.AddCustomer("Kalle Qvist", ssn2);
-
-            while (true)
+            long[] ssn = { 
+                234823, 
+                373287, 
+                585932,
+                174783,
+                714822,
+                327147
+            };
+            b.AddCustomer("John Andersson", ssn[0]);
+            b.AddCustomer("Petter Eriksson", ssn[1]);
+            b.AddCustomer("Elin Johansson", ssn[2]);
+            b.AddCustomer("Niklas Andersson", ssn[3]);
+            b.AddCustomer("Roger Linusson", ssn[4]);
+            b.AddCustomer("Ander Johan Backe", ssn[5]);
+            Random r = new();
+            foreach (Customer c in b.GetListOfCustomers())
             {
-                switch (Console.ReadKey().KeyChar)
+                for (int i = 0; i < r.Next(1,15); i++)
                 {
-                    case '1':
+                    b.AddSavingsAccount(c.SSN);
+                }
+            }
+
+
+            bool loop = true;
+            while (loop)
+            {
+                StringBuilder sb = new();
+                sb.AppendLine("0. Avsluta");
+                sb.AppendLine("1. Skriv ut en lista med bankens kunder (personnummer, för och efternamn) till en textfil");
+                sb.AppendLine("2. Lägg till en ny kund med ett unikt personnummer");
+                sb.AppendLine("3. Ändra en kunds namn (Personnummer ska inte kunna ändras )");
+                sb.AppendLine("4. Ta bort en befintlig kund, befintliga konton måste också avslutas");
+                sb.AppendLine("5. Skapa sparkonto till en befintlig kund.");
+                sb.AppendLine("6. Avsluta konto");
+                sb.AppendLine("7. Se information om vald kund");
+                sb.AppendLine("8. Sätta in pengar på ett konto");
+                sb.AppendLine("9. Ta ut pengar från ett konto (om saldot täcks)");
+                Console.WriteLine(sb);
+                sb.Length = 0;
+                List<string> customers = b.getAllCustomers();
+                switch (Console.ReadKey(intercept:true).KeyChar)
+                {
+
+                        case '1':
+                        Console.Clear();
+                        Console.WriteLine("Creating the text-file \"list.txt\" in the running directory.");
+                        foreach (string line in customers) {
+                            sb.AppendLine(line);
+                        }
+                        Console.WriteLine(sb);
+                        string path = @"list.txt";
+                        // Create a file to write to.
+                        using (StreamWriter sw = File.CreateText(path))
+                        {
+                               sw.WriteLine(sb);
+                        }
+                        Console.WriteLine($"List written to {path}");
+
+                        Console.ReadLine();
+                        Console.Clear();
                         break;
                     case '2':
+
                         break;
                     case '3':
                         break;
@@ -297,9 +345,9 @@ namespace Bank
                         break;
                     case '9':
                         break;
-
-                        Console.WriteLine("");
-                        Console.WriteLine("Programmet avslutas.");
+                    case '0':
+                        loop = false;
+                        break;
                 }
             }
         }
