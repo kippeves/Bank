@@ -477,12 +477,9 @@ namespace Bank
                                     Console.WriteLine("SSN: " + svar8);
                                 }
                             Console.WriteLine(" ");
-                            Console.WriteLine("Vill du se yttligare en kund? ");
+                            Console.WriteLine("Vill du se yttligare en kund? ja/nej");
                             svar9 = Console.ReadLine().ToLower();
                         }
-                        
-                        
-
                         break;
                     case '8':
                         break;
