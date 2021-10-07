@@ -531,10 +531,9 @@ namespace Bank
         public static void Case8(BankLogic b)
         {
             string answer = "";
-            bool ParseSuccess;
-            bool customerExists;
-            long tempValue;
-            Customer c;
+            Customer c = null;
+            long ssn = 0;
+            SavingsAccount sa = null;
 
             while (answer != "nej")
             {
@@ -542,35 +541,32 @@ namespace Bank
                 {
                     Console.WriteLine(item);
                 }
+                
                 do
                 {
                     Console.WriteLine("Skriv personnummer för kund:");
-                    String parseString = Console.ReadLine().Trim();
-                    ParseSuccess = long.TryParse(parseString, out tempValue);
-                    c = b.CustomerHelper(tempValue);
-                    if (c == null)
+                    if (long.TryParse(Console.ReadLine(), out ssn)){
+                        c = b.CustomerHelper(ssn);
+                    }
+                    else
                     {
                         Console.WriteLine("Det finns ingen kund med det personnumret");
                     }
-                    customerExists = !ParseSuccess & (c == null);
-                } while (customerExists);
-
-                SavingsAccount sa;
-                int temp;
-
+                } while (c==null);
+                Console.WriteLine("test");
                 do
                 {
-                    Console.WriteLine("Skriv kontonummer för kund:");
-                    ParseSuccess = int.TryParse(Console.ReadLine(), out temp);
-                    sa = b.AccountHelper(c, temp);
-                    if (sa == null)
+                    Console.WriteLine("Vilket konto vill du välja?");
+                    int account;
+                    if (int.TryParse(Console.ReadLine(), out account))
                     {
-                        Console.WriteLine("Det finns ingen konto med det kontonumret");
+                        sa = b.AccountHelper(c, account);
                     }
-                } while (!ParseSuccess && (sa == null));
+                } while (sa == null);
 
                 Console.WriteLine("Hur mycket pengar vill du sätta in?");
                 Decimal tempDec = 0;
+                bool ParseSuccess;
                 do
                 {
                     ParseSuccess = Decimal.TryParse(Console.ReadLine(), out tempDec);
@@ -608,11 +604,10 @@ namespace Bank
                     }
                 } while (!ParseSuccess && (c == null));
                 SavingsAccount sa;
-                int temp;
                 do
                 {
                     Console.WriteLine("Skriv kontonummer för kund:");
-                    ParseSuccess = int.TryParse(Console.ReadLine(), out temp);
+                    ParseSuccess = int.TryParse(Console.ReadLine(), out int temp);
                     sa = b.AccountHelper(c, temp);
                     if (sa == null)
                     {
