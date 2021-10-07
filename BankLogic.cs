@@ -11,10 +11,20 @@ namespace Bank
     {
         readonly private List<Customer> ListOfCustomers = new();
 
+        /// <summary>
+        /// Hämtar en lista med alla kunder som finns i banken.
+        /// </summary>
+        /// <returns>En lista med alla kunder i objektformat</returns>
         public List<Customer> GetListOfCustomers()
         {
             return ListOfCustomers;
         }
+
+        /// <summary>
+        /// Hämtar en kund i systemet. Om kunden inte finns så returneras null.
+        /// </summary>
+        /// <param name="ssn"></param>
+        /// <returns>Ett Customer-objekt.</returns>
         public Customer CustomerHelper(long ssn)
         {
             IEnumerable<Customer> tempCustList = ListOfCustomers.Where(c => c.SSN == ssn);
@@ -25,6 +35,13 @@ namespace Bank
             else return null;
         }
 
+
+        /// <summary>
+        /// Hämtar ett sparkonto-objekt. Om objektet inte finns så returneras null.
+        /// </summary>
+        /// <param name="c">Ett kundobjekt.</param>
+        /// <param name="accountId">Ett kontonummer i heltalsform</param>
+        /// <returns></returns>
         public SavingsAccount AccountHelper(Customer c, int accountId)
         {
             IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
@@ -35,6 +52,10 @@ namespace Bank
             else return null;
         }
 
+        /// <summary>
+        /// Hämtar en lista med information om alla kunder.
+        /// </summary>
+        /// <returns>En lista med strängar.</returns>
         public List<String> GetCustomers()
         {
             List<string> returnList = new();
@@ -42,6 +63,13 @@ namespace Bank
             return returnList;
         }
 
+        /// <summary>
+        /// Lägger till en kund i banksystemet.
+        /// Namnet klipps på det sista mellanslaget.
+        /// </summary>
+        /// <param name="name">Namnet på kunden, både för och efternamn.</param>
+        /// <param name="pNr">Personnummer för en kund</param>
+        /// <returns></returns>
         public bool AddCustomer(string name, long pNr)
         {
             int SpaceIndex = name.LastIndexOf(" ");
@@ -67,6 +95,11 @@ namespace Bank
             else return false;
         }
 
+        /// <summary>
+        /// Hämtar information om en kund i textformat.
+        /// </summary>
+        /// <param name="pNr">Ett personnummer.</param>
+        /// <returns></returns>
         public List<string> GetCustomer(long pNr)
         {
             List<string> TempList = new();
@@ -81,6 +114,14 @@ namespace Bank
             else return null;
         }
 
+
+        /// <summary>
+        /// Ändrar namnet på en kund i banksystemet.
+        /// Namnet klipps på det sista mellanslaget.
+        /// </summary>
+        /// <param name="name">Namnet på kunden, både för och efternamn.</param>
+        /// <param name="pNr">Personnummer för en kund</param>
+        /// <returns></returns>
         public bool ChangeCustomerName(String name, long pNr)
         {
             Customer c = CustomerHelper(pNr);
@@ -105,6 +146,12 @@ namespace Bank
             }
             else return false;
         }
+
+        /// <summary>
+        /// Tar bort en kund i banksystemet.
+        /// </summary>
+        /// <param name="pNr">Personnumret för kunden som skall tas bort.</param>
+        /// <returns></returns>
         public List<string> RemoveCustomer(long pNr)
         {
             Customer c = CustomerHelper(pNr);
@@ -132,6 +179,12 @@ namespace Bank
             else return null;
         }
 
+
+        /// <summary>
+        /// Lägger till ett sparkonto för en kund.
+        /// </summary>
+        /// <param name="pNr">Personnumret för den kund som skall få ett konto.</param>
+        /// <returns></returns>
         public int AddSavingsAccount(long pNr)
         {
             Customer c = CustomerHelper(pNr);
@@ -152,6 +205,12 @@ namespace Bank
             else return -1;
         }
 
+        /// <summary>
+        /// Hämtar information om ett konto
+        /// </summary>
+        /// <param name="pNr">Personnumret på en kund</param>
+        /// <param name="accountId">Kontonumret för det konto som skall hämtas.</param>
+        /// <returns></returns>
         public string GetAccount(long pNr, int accountId)
         {
             Customer c = CustomerHelper(pNr);
@@ -166,7 +225,13 @@ namespace Bank
             }
             else return "No customer with that Social Security Number.";
         }
-
+        /// <summary>
+        /// Lägger till pengar på ett konto
+        /// </summary>
+        /// <param name="pNr">Personnumret för den kund som skall få pengar insatta</param>
+        /// <param name="accountId">Kontonumret för det konto som skall få pengar insatta.</param>
+        /// <param name="amount">Den mängd som skall sättas in.</param>
+        /// <returns></returns>
         public Boolean Deposit(long pNr, int accountId, decimal amount)
         {
             Customer c = CustomerHelper(pNr);
@@ -183,6 +248,13 @@ namespace Bank
             else return false;
         }
 
+        /// <summary>
+        /// Tar ut pengar ifrån ett konto
+        /// </summary>
+        /// <param name="pNr">Personnumret för den kund som skall ta ut pengar</param>
+        /// <param name="accountId">Kontonumret för det konto som skall få pengar uttaget.</param>
+        /// <param name="amount">Den mängd som skall tas ut.</param>
+        /// <returns></returns>
         public Boolean Withdraw(long pNr, int accountId, decimal amount)
         {
             Customer c = CustomerHelper(pNr);
@@ -198,6 +270,13 @@ namespace Bank
             else return false;
         }
 
+
+        /// <summary>
+        /// Stänger ett sparkonto i banksystemet.
+        /// </summary>
+        /// <param name="pNr">Personnumret för den kund vars konto ska stängas</param>
+        /// <param name="accountId">Kontonummer för det konto som skall stängas</param>
+        /// <returns></returns>
         public string CloseAccount(long pNr, int accountId)
         {
             Customer c = CustomerHelper(pNr);
@@ -214,7 +293,10 @@ namespace Bank
             }
             else return null;
         }
-
+        /// <summary>
+        /// Hämtar en lista med alla kunder i textformat.
+        /// </summary>
+        /// <returns></returns>
         public List<string> getAllCustomers()
         {
             List<string> tempString = new();
