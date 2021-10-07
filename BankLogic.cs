@@ -307,6 +307,345 @@ namespace Bank
             return tempString;
         }
 
+
+        public static void Case1(BankLogic b)
+        {
+            StringBuilder sb = new();
+            Console.Clear();
+            Console.WriteLine("Skapar textfilen \"list.txt\" i mappen som .EXE-filen körs i.");
+            foreach (string line in b.getAllCustomers())
+            {
+                sb.AppendLine(line);
+            }
+            Console.WriteLine(sb);
+            string path = @"list.txt";
+            // Create a file to write to.
+            using (StreamWriter sw = File.CreateText(path))
+            {
+                sw.WriteLine(sb);
+            }
+            Console.WriteLine($"Lista skriven till {path}");
+
+            Console.ReadLine();
+            Console.Clear();
+        }
+        public static void Case2(BankLogic b)
+        {
+            string name;
+            bool correctSSN;
+            long pNr;
+            StringBuilder sb = new();
+            do
+            {
+                Console.WriteLine("Vad är ditt namn?");
+                name = Console.ReadLine();
+            } while (name.Trim().Length == 0);
+            Console.WriteLine();
+            do
+            {
+                Console.WriteLine("Vad är ditt personnummer?");
+                correctSSN = long.TryParse(Console.ReadLine(), out pNr);
+                if (!correctSSN)
+                {
+                    Console.WriteLine("Du skrev inte in ditt nummer korrekt. Vänligen försök igen");
+                }
+            } while (!correctSSN);
+            sb.AppendLine("Denna information kommer att sparas:");
+            sb.AppendLine($"Namn:\t{name}");
+            sb.AppendLine($"Personnummer:\t{pNr}");
+            Console.WriteLine(sb);
+            Console.WriteLine();
+            bool registeredUser = b.AddCustomer(name, pNr);
+            if (registeredUser)
+            {
+                Console.WriteLine("Din användare lades till i listan.");
+            }
+            else
+            {
+                Console.WriteLine("Du kunde inte läggas till i systemet");
+                Console.WriteLine("Do you already have a user with that Social Security Number registered?");
+            }
+            Console.WriteLine();
+        }
+        public static void Case3(BankLogic b)
+        {
+            bool correctSSN;
+            string name;
+            long pNr;
+
+            Console.WriteLine("Vilken användare vill du ändra namn på?");
+            foreach (Customer c in b.GetListOfCustomers())
+            {
+                Console.WriteLine($"{c.SSN}: {c.FullName}");
+            }
+            do
+            {
+                Console.WriteLine("What is your social security number?");
+                correctSSN = long.TryParse(Console.ReadLine(), out pNr);
+                if (!correctSSN)
+                {
+                    Console.WriteLine("You did not enter your number correctly. Please try again.");
+                }
+            } while (!correctSSN);
+            do
+            {
+                Console.WriteLine("What name do you want to change to?");
+                name = Console.ReadLine();
+            }
+            while (name.Trim().Length == 0);
+            b.ChangeCustomerName(name, pNr);
+        }
+        public static void Case4(BankLogic b)
+        {
+            foreach (var item in b.getAllCustomers())
+            {
+                Console.WriteLine(item);
+            }
+            string answer = "";
+            while (answer != "nej")
+            {
+
+                Console.Write("Mata in personnummret på kunden du vill ta bort: ");
+                long pNr = long.Parse(Console.ReadLine());
+                List<string> s;
+                if ((s = b.RemoveCustomer(pNr)) != null)
+                {
+                    Console.WriteLine("Du tog bort denna kund:");
+                    Console.WriteLine("");
+                    foreach (var item in s)
+                    {
+                        Console.WriteLine(item);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Felaktigt personnummer.");
+                }
+
+                Console.WriteLine("");
+                Console.WriteLine("");
+
+                foreach (var item in b.getAllCustomers())
+                {
+                    Console.WriteLine(item);
+                }
+                Console.WriteLine("");
+                Console.WriteLine("Vill du ta bort yttligare en kund? ja/nej");
+                answer = Console.ReadLine().ToLower();
+            }
+        }
+        public static void Case5(BankLogic b)
+        {
+            string answer = "";
+            while (answer != "nej")
+            {
+                foreach (var item in b.getAllCustomers())
+                {
+                    Console.WriteLine(item);
+                }
+                Console.WriteLine("");
+                Console.Write("Mata in personnummer på den kund som du vill skapa ett nytt konto åt: ");
+                long svar3 = long.Parse(Console.ReadLine());
+
+                int status = b.AddSavingsAccount(svar3);
+
+                if (status == -1)
+                {
+                    Console.WriteLine("Felaktigt personnummer.");
+                }
+                else
+                {
+                    Console.WriteLine($"Ett sparkonto skapades. Kontonummer {status}");
+                }
+
+                foreach (var item in b.getAllCustomers())
+                {
+                    Console.WriteLine(item);
+                }
+
+                Console.Write("Vill du skapa yttligare ett sparkonto åt en befintlig kund? ja/nej ");
+                answer = Console.ReadLine().ToLower();
+            }
+        }
+        public static void Case6(BankLogic b)
+        {
+            string answer = "";
+            while (answer != "nej")
+            {
+                foreach (var item in b.getAllCustomers())
+                {
+                    Console.WriteLine(item);
+                }
+                Console.WriteLine("");
+                Console.Write("Mata in det personnummer till det kontot du vill avsluta: ");
+                long svar6 = long.Parse(Console.ReadLine());
+
+                Console.WriteLine(" ");
+
+                Console.Write("Mata in konto Id till kontot du vill avsluta: ");
+                int svar7 = int.Parse(Console.ReadLine());
+                string status = b.CloseAccount(svar6, svar7);
+
+                if (status != null)
+                {
+                    Console.WriteLine("Ditt konto har tagits bort.");
+                }
+                else
+                {
+                    Console.WriteLine("Felaktig inmatning!");
+                }
+
+                Console.WriteLine("Vill du ta bort yttligare ett konto? ja/nej");
+                answer = Console.ReadLine().ToLower();
+            }
+        }
+        public static void Case7(BankLogic b)
+        {
+            string answer = "";
+            while (answer != "nej")
+            {
+                foreach (var item in b.getAllCustomers())
+                {
+                    Console.WriteLine(item);
+                }
+                Console.WriteLine(" ");
+                Console.Write("Ange kundens personnummer som du vill se information om? ");
+                long svar8 = long.Parse(Console.ReadLine());
+
+                Customer s = b.CustomerHelper(svar8);
+                if (s == null)
+                {
+                    Console.WriteLine("Kunden fanns inte.");
+                }
+                else
+                {
+                    Console.WriteLine("Förnamn: " + s.GetFirstName());
+                    Console.WriteLine("Efternamn: " + s.GetLastName());
+                    Console.WriteLine("SSN: " + svar8);
+                }
+                Console.WriteLine(" ");
+                Console.WriteLine("Vill du se yttligare en kund? ");
+                answer = Console.ReadLine().ToLower();
+            }
+        }
+        public static void Case8(BankLogic b)
+        {
+            string answer = "";
+            bool ParseSuccess;
+            bool customerExists;
+            long tempValue;
+            Customer c;
+
+            while (answer != "nej")
+            {
+                foreach (var item in b.getAllCustomers())
+                {
+                    Console.WriteLine(item);
+                }
+                do
+                {
+                    Console.WriteLine("Skriv personnummer för kund:");
+                    String parseString = Console.ReadLine().Trim();
+                    ParseSuccess = long.TryParse(parseString, out tempValue);
+                    c = b.CustomerHelper(tempValue);
+                    if (c == null)
+                    {
+                        Console.WriteLine("Det finns ingen kund med det personnumret");
+                    }
+                    customerExists = !ParseSuccess & (c == null);
+                } while (customerExists);
+
+                SavingsAccount sa;
+                int temp;
+
+                do
+                {
+                    Console.WriteLine("Skriv kontonummer för kund:");
+                    ParseSuccess = int.TryParse(Console.ReadLine(), out temp);
+                    sa = b.AccountHelper(c, temp);
+                    if (sa == null)
+                    {
+                        Console.WriteLine("Det finns ingen konto med det kontonumret");
+                    }
+                } while (!ParseSuccess && (sa == null));
+
+                Console.WriteLine("Hur mycket pengar vill du sätta in?");
+                Decimal tempDec = 0;
+                do
+                {
+                    ParseSuccess = Decimal.TryParse(Console.ReadLine(), out tempDec);
+                    if (ParseSuccess)
+                    {
+                        sa.DepositAmount(tempDec);
+                    }
+                    else Console.WriteLine("Du skrev inte in ett giltigt tal, försök igen");
+                } while (!ParseSuccess);
+                Console.WriteLine($"{tempDec} sattes in på konto {sa.GetAccountNo()}, tillhörande {c.FullName}");
+                Console.WriteLine(" ");
+                Console.WriteLine("Vill du se yttligare en kund? ");
+                answer = Console.ReadLine().ToLower();
+            }
+        }
+        public static void Case9(BankLogic b){
+            string answer = "";
+            bool ParseSuccess = false;
+            while (answer != "nej")
+            {
+                long tempValue;
+                foreach (var item in b.getAllCustomers())
+                {
+                    Console.WriteLine(item);
+                }
+                Customer c;
+                do
+                {
+                    Console.WriteLine("Skriv personnummer för kund:");
+                    ParseSuccess = long.TryParse(Console.ReadLine(), out tempValue);
+                    c = b.CustomerHelper(tempValue);
+                    if (c == null)
+                    {
+                        Console.WriteLine("Det finns ingen kund med det personnumret");
+                    }
+                } while (!ParseSuccess && (c == null));
+                SavingsAccount sa;
+                int temp;
+                do
+                {
+                    Console.WriteLine("Skriv kontonummer för kund:");
+                    ParseSuccess = int.TryParse(Console.ReadLine(), out temp);
+                    sa = b.AccountHelper(c, temp);
+                    if (sa == null)
+                    {
+                        Console.WriteLine("Det finns ingen konto med det kontonumret");
+                    }
+                } while (!ParseSuccess && (sa == null));
+                Console.WriteLine("Hur mycket pengar vill du ta ut?");
+                Decimal tempDec = 0;
+                do
+                {
+                    ParseSuccess = Decimal.TryParse(Console.ReadLine(), out tempDec);
+                    if (ParseSuccess)
+                    {
+                        if (sa.WithdrawAmount(tempDec))
+                        {
+                            Console.WriteLine($"{tempDec} togs ut från konto {sa.GetAccountNo()}. {sa.GetAmount()} finns kvar på kontot.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Det gick inte att ta ut mängden pengar från kontot.");
+                            Console.WriteLine("Försökte du ta ut för mycket pengar?");
+                        }
+                    }
+                    else Console.WriteLine("Du skrev inte in ett giltigt tal, försök igen");
+                } while (!ParseSuccess);
+                Console.WriteLine(" ");
+                Console.WriteLine("Vill du se yttligare en kund? ");
+                answer = Console.ReadLine().ToLower();
+            }
+
+        }
+
+
         static void Main()
         {
             BankLogic b = new();
@@ -354,192 +693,31 @@ namespace Bank
                 {
 
                     case '1':
-                        Console.Clear();
-                        Console.WriteLine("Skapar textfilen \"list.txt\" i mappen som .EXE-filen körs i.");
-                        foreach (string line in customers)
-                        {
-                            sb.AppendLine(line);
-                        }
-                        Console.WriteLine(sb);
-                        string path = @"list.txt";
-                        // Create a file to write to.
-                        using (StreamWriter sw = File.CreateText(path))
-                        {
-                            sw.WriteLine(sb);
-                        }
-                        Console.WriteLine($"Lista skriven till {path}");
-
-                        Console.ReadLine();
-                        Console.Clear();
+                        Case1(b);
                         break;
-
                     case '2':
-                        string name;
-                        bool correctSSN;
-                        long pNr;
-                        do
-                        {
-                            Console.WriteLine("Vad är ditt namn?");
-                            name = Console.ReadLine();
-                        } while (name.Trim().Length == 0);
-                        Console.WriteLine();
-                        do
-                        {
-                            Console.WriteLine("Vad är ditt personnummer?");
-                            correctSSN = long.TryParse(Console.ReadLine(), out pNr);
-                            if (!correctSSN)
-                            {
-                                Console.WriteLine("Du skrev inte in ditt nummer korrekt. Vänligen försök igen");
-                            }
-                        } while (!correctSSN);
-                        sb.AppendLine("Denna information kommer att sparas:");
-                        sb.AppendLine($"Namn:\t{name}");
-                        sb.AppendLine($"Personnummer:\t{pNr}");
-                        Console.WriteLine(sb);
-                        Console.WriteLine();
-                        bool registeredUser = b.AddCustomer(name, pNr);
-                        if (registeredUser)
-                        {
-                            Console.WriteLine("Din användare lades till i listan.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Du kunde inte läggas till i systemet");
-                            Console.WriteLine("Do you already have a user with that Social Security Number registered?");
-                        }
-                        Console.WriteLine();
+                        Case2(b);
                         break;
-
                     case '3':
-                        Console.WriteLine("Vilken användare vill du ändra namn på?");
-                        foreach (Customer c in b.GetListOfCustomers())
-                        {
-                            Console.WriteLine($"{c.SSN}: {c.FullName}");
-                        }
-                        do
-                        {
-                            Console.WriteLine("What is your social security number?");
-                            correctSSN = long.TryParse(Console.ReadLine(), out pNr);
-                            if (!correctSSN)
-                            {
-                                Console.WriteLine("You did not enter your number correctly. Please try again.");
-                            }
-                        } while (!correctSSN);
-                        do
-                        {
-                            Console.WriteLine("What name do you want to change to?");
-                            name = Console.ReadLine();
-                        }
-                        while (name.Trim().Length == 0);
-                        b.ChangeCustomerName(name, pNr);
+                        Case3(b);
                         break;
                     case '4':
-                        foreach (var item in b.getAllCustomers())
-                        {
-                            Console.WriteLine(item);
-                        }
-                        string svar = "";
-                        while (svar != "nej")
-                        {
-
-                            Console.Write("Mata in personnummret på kunden du vill ta bort: ");
-                            long svar1 = long.Parse(Console.ReadLine());
-                            List<string> s;
-                            if ((s = b.RemoveCustomer(svar1)) != null)
-                            {
-                                Console.WriteLine("Du tog bort denna kund:");
-                                Console.WriteLine("");
-                                foreach (var item in s)
-                                {
-                                    Console.WriteLine(item);
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Felaktigt personnummer.");
-                            }
-
-                            Console.WriteLine("");
-                            Console.WriteLine("");
-
-                            foreach (var item in b.getAllCustomers())
-                            {
-                                Console.WriteLine(item);
-                            }
-                            Console.WriteLine("");
-                            Console.WriteLine("Vill du ta bort yttligare en kund? ja/nej");
-                            svar = Console.ReadLine().ToLower();
-                        }
-
+                        Case4(b);
                         break;
                     case '5':
-                        string svar2 = "";
-                        while (svar2 != "nej")
-                        {
-                            foreach (var item in b.getAllCustomers())
-                            {
-                                Console.WriteLine(item);
-                            }
-                            Console.WriteLine("");
-                            Console.Write("Mata in personnummer på den kund som du vill skapa ett nytt konto åt: ");
-                            long svar3 = long.Parse(Console.ReadLine());
-
-                            int status = b.AddSavingsAccount(svar3);
-
-                            if (status == -1)
-                            {
-                                Console.WriteLine("Felaktigt personnummer.");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Ett sparkonto skapades. Kontonummer {status}");
-                            }
-
-                            foreach (var item in b.getAllCustomers())
-                            {
-                                Console.WriteLine(item);
-                            }
-
-                            Console.Write("Vill du skapa yttligare ett sparkonto åt en befintlig kund? ja/nej ");
-                            svar2 = Console.ReadLine().ToLower();
-                        }
+                        Case5(b);
                         break;
                     case '6':
-                        string svar5 = "";
-                        while (svar5 != "nej")
-                        {
-                            foreach (var item in b.getAllCustomers())
-                            {
-                            Console.WriteLine(item);
-                            }
-                            Console.WriteLine("");
-                            Console.Write("Mata in det personnummer till det kontot du vill avsluta: ");
-                            long svar6 = long.Parse(Console.ReadLine());
-
-                            Console.WriteLine(" ");
-
-                            Console.Write("Mata in konto Id till kontot du vill avsluta: ");
-                            int svar7 = int.Parse(Console.ReadLine());
-                            string status = b.CloseAccount(svar6, svar7);
-
-                            if (status != null)
-                            {
-                                Console.WriteLine("Ditt konto har tagits bort.");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Felaktig inmatning!");
-                            }
-
-                            Console.WriteLine("Vill du ta bort yttligare ett konto? ja/nej");
-                            svar5 = Console.ReadLine().ToLower();
-                        }
+                        Case6(b);
                         break;
                     case '7':
+                        Case7(b);
                         break;
                     case '8':
+                        Case8(b);
                         break;
                     case '9':
+                        Case9(b);
                         break;
                     case '0':
                         loop = false;
