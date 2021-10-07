@@ -536,6 +536,35 @@ namespace Bank
                         }
                         break;
                     case '7':
+                        string svar9 = "";
+                        while (svar9 != "nej")
+                        {
+                            foreach (var item in b.getAllCustomers())
+                                {
+                                Console.WriteLine(item);
+                                }
+                            Console.WriteLine(" ");
+                                Console.Write("Ange kundens personnummer som du vill se information om? ");
+                                long svar8 = long.Parse(Console.ReadLine());
+
+                                Customer s = b.CustomerHelper(svar8);
+                            if (s == null)
+                                {
+                                    Console.WriteLine("Kunden fanns inte.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Förnamn: " + s.GetFirstName());
+                                    Console.WriteLine("Efternamn: " + s.GetLastName());
+                                    Console.WriteLine("SSN: " + svar8);
+                                }
+                            Console.WriteLine(" ");
+                            Console.WriteLine("Vill du se yttligare en kund? ");
+                            svar9 = Console.ReadLine().ToLower();
+                        }
+                        
+                        
+
                         break;
                     case '8':
                         break;
