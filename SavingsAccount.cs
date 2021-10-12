@@ -35,6 +35,7 @@ namespace Bank
         /// <returns>Om summan är mindre eller lika med mängden i kontot så returneras true, annars false.</returns>
         public bool WithdrawAmount(decimal amount)
         {
+        // Hämtar sant om summan som personen vill hämta ut resulterar i mer än eller lika med noll.
             if ((this.Amount - amount) >= 0)
             {
                 this.Amount -= amount;
@@ -67,6 +68,7 @@ namespace Bank
         /// <returns></returns>
         public Decimal CalculateInterest()
         {
+            // Räknar ut räntevärdet av kontosumman
             return (this.Amount * ((decimal)Interest) / 100);
         }
 

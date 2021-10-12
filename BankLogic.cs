@@ -27,12 +27,16 @@ namespace Bank
         /// <returns>Ett Customer-objekt.</returns>
         public Customer CustomerHelper(long ssn)
         {
+            // Hämtar ut en lista med kunder som stämmer överens med det personnumret som söks efter i funktionsanropet.
+            // HELST så bör endast en kund hittas, annars har någonting gått fel. 
             IEnumerable<Customer> tempCustList = ListOfCustomers.Where(c => c.SSN == ssn);
+            // För att säkerställa att det inte skickas tillbaka någonting när det har hittats mer än en kund (som sagt, det BÖR inte hända).
             if (tempCustList.Count() == 1)
             {
+                // Hämta tillbaka första objektet i listan, alltså, den enda kunden som hittades. Det går säkert satt lösa snyggare, men jag vet inte hur man gör
                 return tempCustList.First();
             }
-            else return null;
+            else return null; // Skicka tillbaka ett nullvärde för felhantering senare
         }
 
 
@@ -44,12 +48,16 @@ namespace Bank
         /// <returns></returns>
         public SavingsAccount AccountHelper(Customer c, int accountId)
         {
+            // Hämtar ut de konton som hittades med kontonumret som söks efter i funktionsanropet.
+            // Samma sak om i kundsökningsfunktionen, då det kollas om det finns ett konto med liknande nummer bör endast ett finnas.
             IEnumerable<SavingsAccount> temp = c.GetListOfAccounts().Where(item => item.GetAccountNo() == accountId);
+            // Om det endast hittades ett objekt i sökningen
             if (temp.Count() == 1)
             {
+                //Skicka tillbaka objektet. Det går säkert att lösa med temp[0] men jag är nöjd med den lösningen.
                 return temp.First();
             }
-            else return null;
+            else return null; // Skickar tillbaka ett nullvärde för felhantering senare.
         }
 
         /// <summary>
@@ -58,7 +66,9 @@ namespace Bank
         /// <returns>En lista med strängar.</returns>
         public List<String> GetCustomers()
         {
+            // Skapar ett listobjekt för att lägga till information i.
             List<string> returnList = new();
+            // Lägger till "Personnummer: (En kunds personnummer), Namn: (Kundens namn)" och returnerar lista.
             ListOfCustomers.ForEach(cust => returnList.Add("Personnummer: " + cust.SSN + ", Namn: " + cust.FullName));
             return returnList;
         }
@@ -72,26 +82,39 @@ namespace Bank
         /// <returns></returns>
         public bool AddCustomer(string name, long pNr)
         {
+            // Då jag förstod det som att man skulle skicka in ett namn som en textsträng som skulle hanteras så byggde jag (Kristian)
+            // följande anordning.
+            
+            // Den söker upp den sista förekomsten av ett mellanslag i namnet
             int SpaceIndex = name.LastIndexOf(" ");
             string FirstName;
             string LastName;
+            // Om det finns ett mellanslag i namnet
             if (SpaceIndex > 0)
             {
+                // Bryt namnet på det sista mellanslaget. Det betyder att man endast får ha ett efternamn, och hur många förnamn man vill.
                 FirstName = name[0..SpaceIndex].Trim();
+                // It's a feature, not a bug.
                 LastName = name[(SpaceIndex + 1)..name.Length].Trim();
             }
             else
             {
+                // Om man inte har något efternamn så sätts hela namnet i förnamnsfältet, och det sista fältet är tomt.
                 FirstName = name;
                 LastName = "";
             }
+            // Hämta ut en kund med personnumret man söker efter.
             Customer c = CustomerHelper(pNr);
+            // Om det inte finns någon kund med det personnumret (funktionen skickar tillbaka null om den inte hittar någon kund)
             if (null == c)
             {
+                // Skapa en ny kund med det delade namnet, och med personnumret som skickades in i anropet.
                 c = new(FirstName, LastName, pNr);
+                // Lägg till kunden i bankens kundlista. Japp, direktanrop rakt in i listan.
                 ListOfCustomers.Add(c);
                 return true;
             }
+            // Om det inte gick att göra, d.v.s om det redan fanns en kund med det personnumret, skicka tillbaka false för felhantering.
             else return false;
         }
 
@@ -102,10 +125,14 @@ namespace Bank
         /// <returns></returns>
         public List<string> GetCustomer(long pNr)
         {
+            // Skapar en lista att lägga till textobjekt i
             List<string> TempList = new();
+            // Kollar om det finns någon kund.
             Customer c = CustomerHelper(pNr);
+            // Om det hittades en kund, d.v.s om variabeln har ett värdet sparat.
             if (null != c)
             {
+                // Lägg till Namn, Personnummer och tillhörande konton om kunder i listan.
                 TempList.Add($"Namn: {c.FullName}, Personnummer: {c.SSN}");
                 TempList.Add("Konton:");
                 TempList.AddRange(c.PrintAccounts());
@@ -124,14 +151,20 @@ namespace Bank
         /// <returns></returns>
         public bool ChangeCustomerName(String name, long pNr)
         {
+            // Söker efter en kund i banksystemet med tillhörande personnummer.
             Customer c = CustomerHelper(pNr);
+            // Om det hittades en kund, d.v.s om värdet har ett värde sparat i sig.
             if (null != c)
             {
+                // Spara vilken plats det sista mellanslaget i namnet ligger någonstans.
                 int SpaceIndex = name.LastIndexOf(" ");
                 string FirstName;
                 string LastName;
+
+                // Om det finns ett mellanslag i namnet
                 if (SpaceIndex > 0)
                 {
+                    // Dela upp för och efternamn.
                     FirstName = name[0..SpaceIndex].Trim();
                     LastName = name[(SpaceIndex + 1)..name.Length].Trim();
                 }
@@ -140,10 +173,12 @@ namespace Bank
                     FirstName = name;
                     LastName = "";
                 }
+                // Sätt för- och efternamn.
                 c.SetFirstName(FirstName);
                 c.SetLastName(LastName);
                 return true;
             }
+            // Om det inte hittades någon kund, skicka tillbaka för felhantering
             else return false;
         }
 
@@ -154,28 +189,38 @@ namespace Bank
         /// <returns></returns>
         public List<string> RemoveCustomer(long pNr)
         {
+            // Sök efter kund med personnummer
             Customer c = CustomerHelper(pNr);
+            // Om det hittades en kund
             if (null != c)
             {
                 List<string> tempList = new();
+                // Hämta information om kund. Funktionen hämtar ut alla informationsfält som returneras i funktionen för kunden.
                 tempList.AddRange(GetCustomer(pNr));
+                // Hämtar ut en lista av alla konton som kunden äger.
                 List<SavingsAccount> accounts = c.GetListOfAccounts();
+                // Om det finns minst ett konto
                 if (accounts.Count > 0)
                 {
                     decimal sum = 0;
                     decimal sumOfInterest = 0;
 
+                    // Skriver ut summan av värdet för alla konton som kunden har.
                     accounts.ForEach(a => sum += a.GetAmount());
                     tempList.Add($"Sum of accounts:\t" + sum);
+                    // Skriver ut summan för all ränta över alla konton som kunden äger.
                     accounts.ForEach(a => sumOfInterest += a.CalculateInterest());
                     tempList.Add($"Sum of interest:\t" + sumOfInterest);
+                    // Tar bort alla konton i kundens 
                     accounts.Clear();
 
                 }
                 else tempList.Add("You have no accounts...");
+                // Ta bort kunden ur kundlistan
                 GetListOfCustomers().Remove(c);
                 return tempList;
             }
+            // Om inte kunden hittades, så skicka tillbaka null för felhantering
             else return null;
         }
 
@@ -367,6 +412,7 @@ namespace Bank
             }
             Console.WriteLine();
         }
+
         public static void Case3(BankLogic b)
         {
             bool correctSSN;
@@ -572,7 +618,7 @@ namespace Bank
                     ParseSuccess = Decimal.TryParse(Console.ReadLine(), out tempDec);
                     if (ParseSuccess)
                     {
-                        sa.DepositAmount(tempDec);
+                        b.Deposit(c.SSN, sa.GetAccountNo(), tempDec);
                     }
                     else Console.WriteLine("Du skrev inte in ett giltigt tal, försök igen");
                 } while (!ParseSuccess);

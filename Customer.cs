@@ -79,7 +79,10 @@ namespace Bank
         /// <returns>Ett List-objekt med strängar.</returns>
         public List<string> PrintAccounts()
         {
+            // Skapar en lista med text-rader.
             List<string> tempList = new();
+            //Lägger till en textbeskrivning om varje konto i en kunds kontolista.
+            // Den är dum, och returnerar en tom lista om det inte finns några konton.
             foreach (var account in GetListOfAccounts())
             {
                 tempList.Add(account.ShowAccount());
