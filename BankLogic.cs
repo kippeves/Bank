@@ -398,6 +398,11 @@ namespace Bank
         }
 
 
+        /* *
+         * 
+         *  Skriv ut en lista med bankens kunder (personnummer, för och efternamn) till en textfil
+         * 
+         * */
         public static void Case1(BankLogic b)
         {
             // Skapar en ny sträng
@@ -423,6 +428,13 @@ namespace Bank
             Console.ReadLine();
             Console.Clear();
         }
+
+        /***
+         * 
+         * Lägg till en ny kund med ett unikt personnummer
+         * 
+         * */
+
         public static void Case2(BankLogic b)
         {
             string name;
@@ -472,6 +484,13 @@ namespace Bank
             Console.WriteLine();
         }
 
+
+        /***
+         * 
+         * Ändra en kunds namn (Personnummer ska inte kunna ändras )
+         * 
+         * */
+
         public static void Case3(BankLogic b)
         {
             bool correctSSN;
@@ -505,24 +524,32 @@ namespace Bank
             while (name.Trim().Length == 0); // Frågar efter namnet så länge man inte skriver någonting, eller om man bara skriver mellanslag.
             b.ChangeCustomerName(name, pNr); // Byt namn på kunden.
         }
+
+        /***
+         * 
+         * Ta bort en befintlig kund, befintliga konton måste också avslutas
+         * 
+         */
+
         public static void Case4(BankLogic b)
         {
+            //Skriver ut information om alla kunder i banksystemet.
             foreach (var item in b.getAllCustomers())
             {
                 Console.WriteLine(item);
             }
-            string answer = "";
-            while (answer != "nej")
-            {
 
+            string answer = "";
+            while (answer != "nej") // Så länge användaren ber om att få söka efter en kund till
+            {
                 Console.Write("Mata in personnummret på kunden du vill ta bort: ");
-                long pNr = long.Parse(Console.ReadLine());
+                long pNr = long.Parse(Console.ReadLine()); // Spara personnumret
                 List<string> s;
-                if ((s = b.RemoveCustomer(pNr)) != null)
+                if ((s = b.RemoveCustomer(pNr)) != null) // Sparar informationen om borttagna kunden i variabeln.
                 {
                     Console.WriteLine("Du tog bort denna kund:");
                     Console.WriteLine("");
-                    foreach (var item in s)
+                    foreach (var item in s) // Och skriver ut informationen.
                     {
                         Console.WriteLine(item);
                     }
@@ -535,21 +562,28 @@ namespace Bank
                 Console.WriteLine("");
                 Console.WriteLine("");
 
-                foreach (var item in b.getAllCustomers())
+                foreach (var item in b.getAllCustomers()) // Hämtar information om alla kunder så kunden har möjlighet att söka igen.
                 {
                     Console.WriteLine(item);
                 }
                 Console.WriteLine("");
                 Console.WriteLine("Vill du ta bort yttligare en kund? ja/nej");
-                answer = Console.ReadLine().ToLower();
+                answer = Console.ReadLine().ToLower(); // Ger kunden en möjlighet att söka igen.
             }
         }
+
+        /***
+         * 
+         * Skapa sparkonto till en befintlig kund.
+         * 
+         * */
+
         public static void Case5(BankLogic b)
         {
             string answer = "";
-            while (answer != "nej")
+            while (answer != "nej") // Så länge kunden vill söka efter information
             {
-                foreach (var item in b.getAllCustomers())
+                foreach (var item in b.getAllCustomers()) // Skriv ut information alla kunder
                 {
                     Console.WriteLine(item);
                 }
@@ -557,7 +591,7 @@ namespace Bank
                 Console.Write("Mata in personnummer på den kund som du vill skapa ett nytt konto åt: ");
                 long svar3 = long.Parse(Console.ReadLine());
 
-                int status = b.AddSavingsAccount(svar3);
+                int status = b.AddSavingsAccount(svar3); // Hämtar information om det gick att skapa ett konto
 
                 if (status == -1)
                 {
@@ -568,39 +602,46 @@ namespace Bank
                     Console.WriteLine($"Ett sparkonto skapades. Kontonummer {status}");
                 }
 
-                foreach (var item in b.getAllCustomers())
+                foreach (var item in b.getAllCustomers()) // Skriver ut information om alla kunder.
                 {
                     Console.WriteLine(item);
                 }
 
                 Console.Write("Vill du skapa yttligare ett sparkonto åt en befintlig kund? ja/nej ");
-                answer = Console.ReadLine().ToLower();
+                answer = Console.ReadLine().ToLower(); // Frågar kunden efter beslut.
             }
         }
+
+
+        /***
+         * 
+         * Avsluta konto
+         * 
+         * */
         public static void Case6(BankLogic b)
         {
             string answer = "";
-            while (answer != "nej")
+            while (answer != "nej") // Så länge det finns kunder att avsluta.
             {
-                foreach (var item in b.getAllCustomers())
+                foreach (var item in b.getAllCustomers()) // Skriv ut information om alla kunden.
                 {
                     Console.WriteLine(item);
                 }
                 Console.WriteLine("");
                 Console.Write("Mata in det personnummer till det kontot du vill avsluta: ");
-                long svar6 = long.Parse(Console.ReadLine());
+                long svar6 = long.Parse(Console.ReadLine()); // Tar in personnummer för hantering
 
                 Console.WriteLine(" ");
 
                 Console.Write("Mata in konto Id till kontot du vill avsluta: ");
-                int svar7 = int.Parse(Console.ReadLine());
-                string status = b.CloseAccount(svar6, svar7);
+                int svar7 = int.Parse(Console.ReadLine()); // Tar in kontonummer för hantering
+                string status = b.CloseAccount(svar6, svar7); // Kollar om det går att stänga kontot.
 
-                if (status != null)
+                if (status != null) // Om det gick att ta bort konto
                 {
                     Console.WriteLine("Ditt konto har tagits bort.");
                 }
-                else
+                else //Annars skriv ut felmeddelande.
                 {
                     Console.WriteLine("Felaktig inmatning!");
                 }
@@ -609,21 +650,28 @@ namespace Bank
                 answer = Console.ReadLine().ToLower();
             }
         }
+
+        /***
+         * 
+         * Se information om vald kund
+         * 
+         * */
+
         public static void Case7(BankLogic b)
         {
             string answer = "";
-            while (answer != "nej")
+            while (answer != "nej") // Så länge användare vill söka information
             {
-                foreach (var item in b.getAllCustomers())
+                foreach (var item in b.getAllCustomers()) // Skriv ut information om alla användare.
                 {
                     Console.WriteLine(item);
                 }
                 Console.WriteLine(" ");
                 Console.Write("Ange kundens personnummer som du vill se information om? ");
-                long svar8 = long.Parse(Console.ReadLine());
+                long svar8 = long.Parse(Console.ReadLine()); // Hämtar svaret
 
-                Customer s = b.CustomerHelper(svar8);
-                if (s == null)
+                Customer s = b.CustomerHelper(svar8); // Försöker hämta kund efter sökt personnummer
+                if (s == null) // Om det inte hittades någon kund.
                 {
                     Console.WriteLine("Kunden fanns inte.");
                 }
@@ -638,6 +686,12 @@ namespace Bank
                 answer = Console.ReadLine().ToLower();
             }
         }
+
+        /***
+         * 
+         * Sätta in pengar på ett konto
+         * 
+         * */
         public static void Case8(BankLogic b)
         {
             string answer = "";
@@ -645,9 +699,9 @@ namespace Bank
             long ssn = 0;
             SavingsAccount sa = null;
 
-            while (answer != "nej")
+            while (answer != "nej") // Så länge användaren vill utföra insättningar.
             {
-                foreach (var item in b.getAllCustomers())
+                foreach (var item in b.getAllCustomers()) // Skriv ut information om alla kunder.
                 {
                     Console.WriteLine(item);
                 }
@@ -656,7 +710,7 @@ namespace Bank
                 {
                     Console.WriteLine("Skriv personnummer för kund:");
                     if (long.TryParse(Console.ReadLine(), out ssn)){
-                        c = b.CustomerHelper(ssn);
+                        c = b.CustomerHelper(ssn); // Söker efter kund på skrivet personnnummer. Sparar kund om den hittas.
                     }
                     else
                     {
@@ -666,61 +720,69 @@ namespace Bank
                 Console.WriteLine("test");
                 do
                 {
+                    // Frågar efter konto.
                     Console.WriteLine("Vilket konto vill du välja?");
                     int account;
                     if (int.TryParse(Console.ReadLine(), out account))
                     {
+                        // Sparar konto om hittas. Annars sparas null.
                         sa = b.AccountHelper(c, account);
                     }
-                } while (sa == null);
+                } while (sa == null); // Så länge det inte är något giltigt konto.
 
                 Console.WriteLine("Hur mycket pengar vill du sätta in?");
                 Decimal tempDec = 0;
                 bool ParseSuccess;
                 do
                 {
-                    ParseSuccess = Decimal.TryParse(Console.ReadLine(), out tempDec);
+                    ParseSuccess = Decimal.TryParse(Console.ReadLine(), out tempDec); // Försöker läsa strängen, och sparar mängden med pengar till en variabel..
                     if (ParseSuccess)
                     {
-                        b.Deposit(c.SSN, sa.GetAccountNo(), tempDec);
+                        b.Deposit(c.SSN, sa.GetAccountNo(), tempDec); // Om det lyckades, sätt in pengar på kontot.
                     }
-                    else Console.WriteLine("Du skrev inte in ett giltigt tal, försök igen");
+                    else Console.WriteLine("Du skrev inte in ett giltigt tal, försök igen"); // Annars skrivs ett felmeddelande ut.
                 } while (!ParseSuccess);
-                Console.WriteLine($"{tempDec} sattes in på konto {sa.GetAccountNo()}, tillhörande {c.FullName}");
+                Console.WriteLine($"{tempDec} sattes in på konto {sa.GetAccountNo()}, tillhörande {c.FullName}"); // Skriv ut information
                 Console.WriteLine(" ");
                 Console.WriteLine("Vill du se yttligare en kund? ");
-                answer = Console.ReadLine().ToLower();
+                answer = Console.ReadLine().ToLower(); // Ge kunden en möjlighet att söka igen.
             }
         }
+
+        /***
+         * 
+         * Ta ut pengar från ett konto (om saldot täcks)
+         * 
+         * */
         public static void Case9(BankLogic b){
             string answer = "";
             bool ParseSuccess = false;
-            while (answer != "nej")
+            while (answer != "nej") // Så länge kunden vill utföra handlingar.
             {
                 long tempValue;
-                foreach (var item in b.getAllCustomers())
+                foreach (var item in b.getAllCustomers()) // Skriv ut information om alla kunder i banksystemet.
                 {
                     Console.WriteLine(item);
                 }
-                Customer c;
+                Customer c; // Skapar en tom variabel att spara i
                 do
                 {
                     Console.WriteLine("Skriv personnummer för kund:");
                     ParseSuccess = long.TryParse(Console.ReadLine(), out tempValue);
-                    c = b.CustomerHelper(tempValue);
-                    if (c == null)
+                    c = b.CustomerHelper(tempValue); // Försök hämta ut kund ur banksystemet och spara för senare användning.
+                    if (c == null) // Om det inte fanns någon kund.
                     {
                         Console.WriteLine("Det finns ingen kund med det personnumret");
                     }
-                } while (!ParseSuccess && (c == null));
+                } while (!ParseSuccess && (c == null)); // Så länge det inte gick och det inte fanns någon kund
                 SavingsAccount sa;
                 do
                 {
                     Console.WriteLine("Skriv kontonummer för kund:");
                     ParseSuccess = int.TryParse(Console.ReadLine(), out int temp);
-                    sa = b.AccountHelper(c, temp);
+                    sa = b.AccountHelper(c, temp); // Försöker hämta ut efterfrågat konto för tidigare hittad kund.
                     if (sa == null)
-                    {
+                    { // Om det inte hittades något konto, skriv ut felmeddelande.
                         Console.WriteLine("Det finns ingen konto med det kontonumret");
                     }
                 } while (!ParseSuccess && (sa == null));
@@ -730,17 +792,17 @@ namespace Bank
                 {
                     ParseSuccess = Decimal.TryParse(Console.ReadLine(), out tempDec);
                     if (ParseSuccess)
-                    {
+                    { // Försök ta ut pengar
                         if (sa.WithdrawAmount(tempDec))
                         {
                             Console.WriteLine($"{tempDec} togs ut från konto {sa.GetAccountNo()}. {sa.GetAmount()} finns kvar på kontot.");
-                        }
+                        } // Om det övertrasserar kontot, så skrivs ett felmeddelande ut.
                         else
                         {
                             Console.WriteLine("Det gick inte att ta ut mängden pengar från kontot.");
                             Console.WriteLine("Försökte du ta ut för mycket pengar?");
                         }
-                    }
+                    } 
                     else Console.WriteLine("Du skrev inte in ett giltigt tal, försök igen");
                 } while (!ParseSuccess);
                 Console.WriteLine(" ");
@@ -753,7 +815,8 @@ namespace Bank
 
         static void Main()
         {
-            BankLogic b = new();
+            BankLogic b = new(); // Skapar en ny instans av banksystemet för användning
+            // Finns ingen anledning att vara i array egentligen. Bara för senare användning. 
             long[] ssn = {
                 234823,
                 373287,
@@ -762,6 +825,8 @@ namespace Bank
                 714822,
                 327147
             };
+
+            // Lägger till placeholder-kunder för systemet att använda.
             b.AddCustomer("John Andersson", ssn[0]);
             b.AddCustomer("Petter Eriksson", ssn[1]);
             b.AddCustomer("Elin Johansson", ssn[2]);
@@ -769,6 +834,9 @@ namespace Bank
             b.AddCustomer("Roger Linusson", ssn[4]);
             b.AddCustomer("Ander Johan Backe", ssn[5]);
             Random r = new();
+            // Skapar slumpmässigt antal bankkonton till varje kund.
+            // För att hantera menyer och kundlistor.
+            // 
             foreach (Customer c in b.GetListOfCustomers())
             {
                 for (int i = 0; i < r.Next(1, 15); i++)
@@ -780,7 +848,7 @@ namespace Bank
             bool loop = true;
             while (loop)
             {
-                StringBuilder sb = new();
+                StringBuilder sb = new(); // Skapar en tom sträng och fyller i meny
                 sb.AppendLine("0. Avsluta");
                 sb.AppendLine("1. Skriv ut en lista med bankens kunder (personnummer, för och efternamn) till en textfil");
                 sb.AppendLine("2. Lägg till en ny kund med ett unikt personnummer");
@@ -791,9 +859,10 @@ namespace Bank
                 sb.AppendLine("7. Se information om vald kund");
                 sb.AppendLine("8. Sätta in pengar på ett konto");
                 sb.AppendLine("9. Ta ut pengar från ett konto (om saldot täcks)");
-                Console.WriteLine(sb);
-                sb.Length = 0;
-                List<string> customers = b.getAllCustomers();
+                Console.WriteLine(sb); // Skriv ut meny
+                sb.Length = 0; // rensa sträng för att använda igen.
+                
+                // Läser tangentbordstryck för att kunna välja varje case i menyn. Intercept true för att skriva ut knapptryckningen i konsollen.
                 switch (Console.ReadKey(intercept: true).KeyChar)
                 {
 
@@ -825,7 +894,7 @@ namespace Bank
                         Case9(b);
                         break;
                     case '0':
-                        loop = false;
+                        loop = false; // Bryter ur loopen och avslutar programmet.
                         break;
 
                 }
