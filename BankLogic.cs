@@ -232,18 +232,26 @@ namespace Bank
         /// <returns></returns>
         public int AddSavingsAccount(long pNr)
         {
+            // Hämtar en kund med sökt personnummer
             Customer c = CustomerHelper(pNr);
+            // Om det finns en kund
             if (null != c)
             {
+                // Om kunden har minst en lista
                 if (c.GetListOfAccounts().Count > 0)
                 {
+                    // hämtar id-numret för det sista kontot i listan
                     int id = c.GetListOfAccounts().Last().GetAccountNo();
+                    // Skapar ett nytt konto med id-numret ökat med ett ifrån tidigare konto (Om det första är 1001, så är nästa 1002, o.s.v)
                     c.GetListOfAccounts().Add(new SavingsAccount(++id));
+                    // Skicka tillbaka det id-nummer som genererades
                     return id;
                 }
                 else
                 {
+                    // Om det inte finns något konto så skapa det första kontot med id-nummer 1001;
                     c.GetListOfAccounts().Add(new SavingsAccount(1001));
+                    // Eftersom vi vet att det är 1001 kan vi lika gärna skicka tillbaka det.
                     return 1001;
                 }
             }
@@ -258,16 +266,24 @@ namespace Bank
         /// <returns></returns>
         public string GetAccount(long pNr, int accountId)
         {
+
+            // Hämtar en kund ur banksystemet med sökt personnummer
             Customer c = CustomerHelper(pNr);
+            // Om det finns en kund
             if (null != c)
             {
+                // Sök efter konto för hittad kund, oh efterfrågat kontonummer
                 SavingsAccount sa = AccountHelper(c, accountId);
-                if (null == sa)
+                // Om funktionen hittar ett konto
+                if (null != sa)
                 {
+                    // Skicka tillbaka textsträngen med beskrivning om kontot.
                     return sa.ShowAccount();
                 }
-                else return "You had more than one account with that account-number.";
+                // Annars skicka tillbaka null för felhantering senare.
+                else return null;
             }
+            // Skickar tillbaka en textsträng för skojs skull.
             else return "No customer with that Social Security Number.";
         }
         /// <summary>
@@ -279,17 +295,24 @@ namespace Bank
         /// <returns></returns>
         public Boolean Deposit(long pNr, int accountId, decimal amount)
         {
+            // Söker efter en kund i banksystemet med sökt personnummer
             Customer c = CustomerHelper(pNr);
+            // Om du hittar en kund
             if (null != c)
             {
+                // Sök efter konto i systemet för kund och lagra i en variabel.
                 SavingsAccount sa = AccountHelper(c, accountId);
+                // Om du hittar ett konto
                 if (null != sa)
                 {
+                    // Lägg till mängden pengar på kontot.
                     sa.DepositAmount(amount);
                     return true;
                 }
+                // Om du inte hittar något konto med det numret
                 else return false;
             }
+            // Eller hittar någon kund
             else return false;
         }
 
@@ -302,16 +325,24 @@ namespace Bank
         /// <returns></returns>
         public Boolean Withdraw(long pNr, int accountId, decimal amount)
         {
+            // Sök efter kund med efterfrågat personnummer
             Customer c = CustomerHelper(pNr);
+            // Om du hittar en kund
             if (null != c)
             {
+                // Sök efter ett konto för kund med efterfrågat konto-id.
                 SavingsAccount sa = AccountHelper(c, accountId);
+                // Om du hittar ett konto
                 if (null != sa)
                 {
+                    // Ta ut pengar. I funktionen finns felhantering för övertrassering.
+                    // Vid övertrassering returneras false.
                     return sa.WithdrawAmount(amount);
                 }
+                // Om du inte hittar något konto
                 else return false;
             }
+            // Om du inte hittar någon kund.
             else return false;
         }
 
@@ -324,18 +355,27 @@ namespace Bank
         /// <returns></returns>
         public string CloseAccount(long pNr, int accountId)
         {
+            // Sök efter kund i banksystemet med personnummer
             Customer c = CustomerHelper(pNr);
+            // Om du hittar en kund
             if (null != c)
             {
+                // Sök efter ett konto för hittad kund med efterfrågat kontonummer
                 SavingsAccount sa = AccountHelper(c, accountId);
+                // Om du hittar ett konto
                 if (null != sa)
                 {
+                    // Sparar information om kontot i en strängvariabel
                     string returnString = sa.ShowAccount();
+                    // Ta bort kontot ur listan
                     c.GetListOfAccounts().Remove(sa);
+                    // Skicka tillbaka strängen
                     return returnString;
                 }
+                // Om du inte hittar något konto
                 else return null;
             }
+            // Om du inte hittar någon kund
             else return null;
         }
         /// <summary>
@@ -344,33 +384,42 @@ namespace Bank
         /// <returns></returns>
         public List<string> getAllCustomers()
         {
+            // Skapar en tom lista att lagra text i
             List<string> tempString = new();
+            // För varje kund i kundlistan
             foreach (Customer c in GetListOfCustomers())
             {
+                // Söker information, och lägger till informationen i textlistan.
+                // Inser att en AddRange skulle fungera med.
                 GetCustomer(c.SSN).ForEach(line => tempString.Add(line));
             }
+            // Skicka tillbaka en lista med information
             return tempString;
         }
 
 
         public static void Case1(BankLogic b)
         {
+            // Skapar en ny sträng
             StringBuilder sb = new();
+            // Rensar konsollen
             Console.Clear();
             Console.WriteLine("Skapar textfilen \"list.txt\" i mappen som .EXE-filen körs i.");
+            //Lägger till informationen om alla kunder, lägger till i listan med text.
             foreach (string line in b.getAllCustomers())
             {
                 sb.AppendLine(line);
             }
             Console.WriteLine(sb);
+            // Sparar strängen bokstavligt.
             string path = @"list.txt";
-            // Create a file to write to.
+            // Skapar en filvariabel och öppnar en ström att skriva till
             using (StreamWriter sw = File.CreateText(path))
             {
                 sw.WriteLine(sb);
             }
+            // Skriver ut information och pausar för att få information.
             Console.WriteLine($"Lista skriven till {path}");
-
             Console.ReadLine();
             Console.Clear();
         }
@@ -379,33 +428,43 @@ namespace Bank
             string name;
             bool correctSSN;
             long pNr;
+            // Skapar en ny textvariabel
             StringBuilder sb = new();
+            // Frågar efter namn så länge man man inte skriver någonting.
+            // Den tar bort mellanslag.
             do
             {
                 Console.WriteLine("Vad är ditt namn?");
                 name = Console.ReadLine();
             } while (name.Trim().Length == 0);
             Console.WriteLine();
+            // Frågar efter personnummer
             do
             {
+                // Frågar efter personnummer så länge det inte 
                 Console.WriteLine("Vad är ditt personnummer?");
+                // Tolkar strängen till en int.
                 correctSSN = long.TryParse(Console.ReadLine(), out pNr);
+                // Om du inte skrev rätt personnummer
                 if (!correctSSN)
                 {
                     Console.WriteLine("Du skrev inte in ditt nummer korrekt. Vänligen försök igen");
                 }
+                // Gör loopen så länge du inte skriver rätt personnummer
             } while (!correctSSN);
             sb.AppendLine("Denna information kommer att sparas:");
             sb.AppendLine($"Namn:\t{name}");
             sb.AppendLine($"Personnummer:\t{pNr}");
             Console.WriteLine(sb);
             Console.WriteLine();
+            // Om det lyckades att lägga till användare.
             bool registeredUser = b.AddCustomer(name, pNr);
+            // Om det lyckades att lägga till användare.
             if (registeredUser)
             {
                 Console.WriteLine("Din användare lades till i listan.");
             }
-            else
+            else // Eller inte lyckades.
             {
                 Console.WriteLine("Du kunde inte läggas till i systemet");
                 Console.WriteLine("Do you already have a user with that Social Security Number registered?");
@@ -420,17 +479,22 @@ namespace Bank
             long pNr;
 
             Console.WriteLine("Vilken användare vill du ändra namn på?");
-            foreach (Customer c in b.GetListOfCustomers())
+             // Skriver ut information om alla användare i systemet;
+             // Mest för användarläsbarhet.
+            foreach(Customer c in b.GetListOfCustomers())
             {
                 Console.WriteLine($"{c.SSN}: {c.FullName}");
             }
+
+
+            // Söker efter personnummer
             do
             {
                 Console.WriteLine("What is your social security number?");
-                correctSSN = long.TryParse(Console.ReadLine(), out pNr);
+                correctSSN = long.TryParse(Console.ReadLine(), out pNr); // Kollar om man har rätt typ av information.
                 if (!correctSSN)
                 {
-                    Console.WriteLine("You did not enter your number correctly. Please try again.");
+                    Console.WriteLine("You did not enter your number correctly. Please try again."); // Skriver ut felmeddelande
                 }
             } while (!correctSSN);
             do
@@ -438,8 +502,8 @@ namespace Bank
                 Console.WriteLine("What name do you want to change to?");
                 name = Console.ReadLine();
             }
-            while (name.Trim().Length == 0);
-            b.ChangeCustomerName(name, pNr);
+            while (name.Trim().Length == 0); // Frågar efter namnet så länge man inte skriver någonting, eller om man bara skriver mellanslag.
+            b.ChangeCustomerName(name, pNr); // Byt namn på kunden.
         }
         public static void Case4(BankLogic b)
         {
